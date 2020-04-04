@@ -30,3 +30,5 @@ hs_err_pid*
 /mlops4j-model/mlops4j-serving/target/
 /mlops4j-model/mlops4j-monitoring/target/
 /nb-configuration.xml
+/mlops4j-data/mlops4j-extraction/nbproject/
+/mlops4j-model/mlops4j-serving/nbproject/
