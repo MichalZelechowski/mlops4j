@@ -21,3 +21,12 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+/mlops4j-data/mlops4j-extraction/target/
+/mlops4j-data/mlops4j-analysis/target/
+/mlops4j-data/mlops4j-preparation/target/
+/mlops4j-model/mlops4j-training/target/
+/mlops4j-model/mlops4j-evaluation/target/
+/mlops4j-model/mlops4j-validation/target/
+/mlops4j-model/mlops4j-serving/target/
+/mlops4j-model/mlops4j-monitoring/target/
+/nb-configuration.xml

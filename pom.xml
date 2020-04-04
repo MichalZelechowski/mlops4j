@@ -39,7 +39,10 @@
             </properties>
         </profile>   
     </profiles>
-    
+    <modules>
+        <module>mlops4j-data</module>
+        <module>mlops4j-model</module>
+    </modules>
     <dependencies>
         <dependency>
             <groupId>org.nd4j</groupId>
