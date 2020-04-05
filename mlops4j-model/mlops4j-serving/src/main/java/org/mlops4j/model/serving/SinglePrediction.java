@@ -15,19 +15,25 @@
  */
 package org.mlops4j.model.serving;
 
-import lombok.Getter;
+import lombok.EqualsAndHashCode;
+import org.datavec.api.records.Record;
 
 /**
  *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-@Getter
-public class Response {
+@EqualsAndHashCode
+public class SinglePrediction implements Prediction<Record> {
 
-    private final Prediction output;
+    private final Record record;
 
-    public Response(Prediction output) {
-        this.output = output;
+    public SinglePrediction(Record record) {
+        this.record = record;
+
     }
 
+    @Override
+    public Record getValue() {
+        return this.record;
+    }
 }

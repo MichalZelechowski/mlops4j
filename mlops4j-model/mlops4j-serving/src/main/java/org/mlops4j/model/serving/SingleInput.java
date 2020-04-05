@@ -23,7 +23,7 @@ import org.datavec.api.records.impl.Record;
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
 @Getter
-public class SingleInput implements Input<Record> {
+public class SingleInput implements Features<Record> {
 
     private final Record record;
 

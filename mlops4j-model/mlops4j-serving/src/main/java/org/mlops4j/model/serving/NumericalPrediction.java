@@ -15,19 +15,18 @@
  */
 package org.mlops4j.model.serving;
 
-import lombok.Getter;
+import java.util.Collections;
+import org.datavec.api.records.impl.Record;
+import org.datavec.api.writable.FloatWritable;
 
 /**
  *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-@Getter
-public class Response {
+public class NumericalPrediction extends SinglePrediction {
 
-    private final Prediction output;
-
-    public Response(Prediction output) {
-        this.output = output;
+    public NumericalPrediction(float value) {
+        super(new Record(Collections.singletonList(new FloatWritable(value)), null));
     }
 
 }

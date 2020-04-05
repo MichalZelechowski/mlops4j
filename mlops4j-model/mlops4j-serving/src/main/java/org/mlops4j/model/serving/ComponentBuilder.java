@@ -15,19 +15,17 @@
  */
 package org.mlops4j.model.serving;
 
-import lombok.Getter;
+import java.util.List;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
+ * @param <TYPE>
  */
-@Getter
-public class Response {
-
-    private final Prediction output;
-
-    public Response(Prediction output) {
-        this.output = output;
-    }
-
+public interface ComponentBuilder<TYPE> {
+    
+    public TYPE build();
+    
+    public ComponentBuilder<TYPE> fromParameters(List<Pair<String, Object>> parameters);
 }

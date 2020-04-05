@@ -15,25 +15,12 @@
  */
 package org.mlops4j.model.serving;
 
-import lombok.EqualsAndHashCode;
-import org.datavec.api.records.Record;
-
 /**
  *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
+ * @param <METADATA>
  */
-@EqualsAndHashCode
-public class SingleOutput implements Output<Record> {
+public interface HasMetadata<METADATA extends Metadata> {
 
-    private final Record record;
-
-    public SingleOutput(Record record) {
-        this.record = record;
-
-    }
-
-    @Override
-    public Record getValue() {
-        return this.record;
-    }
+    public METADATA getMetadata();
 }

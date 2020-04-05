@@ -15,8 +15,6 @@
  */
 package org.mlops4j.model.serving;
 
-import org.nd4j.linalg.factory.Nd4j;
-
 /**
  *
  * @author Michał Żelechowski <MichalZelechowski@github.com>

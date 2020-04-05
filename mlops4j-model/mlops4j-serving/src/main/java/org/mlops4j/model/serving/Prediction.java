@@ -15,19 +15,13 @@
  */
 package org.mlops4j.model.serving;
 
-import lombok.Getter;
+import java.io.Serializable;
 
 /**
  *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-@Getter
-public class Response {
+public interface Prediction<VALUE> extends Serializable {
 
-    private final Prediction output;
-
-    public Response(Prediction output) {
-        this.output = output;
-    }
-
+    public VALUE getValue();
 }

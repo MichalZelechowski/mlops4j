@@ -15,19 +15,22 @@
  */
 package org.mlops4j.model.serving;
 
-import lombok.Getter;
+import java.util.Collections;
+import java.util.List;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-@Getter
-public class Response {
+public class DataConverterMetadata extends Metadata<DataConverter> {
 
-    private final Prediction output;
+    public DataConverterMetadata(String component) {
+        super(component, Collections.EMPTY_LIST);
+    }
 
-    public Response(Prediction output) {
-        this.output = output;
+    public DataConverterMetadata(String component, List<Pair<String, Object>> parameters) {
+        super(component, parameters);
     }
 
 }

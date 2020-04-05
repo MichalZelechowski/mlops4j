@@ -15,13 +15,27 @@
  */
 package org.mlops4j.model.serving;
 
-import java.io.Serializable;
+import org.nd4j.linalg.api.ndarray.INDArray;
 
 /**
  *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-public interface Output<VALUE> extends Serializable {
+public interface Inference extends HasMetadata<InferenceMetadata> {
 
-    public VALUE getValue();
+    public INDArray output(INDArray input);
+
+    public byte[] getModelBinary();
+
+    public static interface Builder<INFERENCE extends Inference> extends ComponentBuilder<INFERENCE> {
+
+        public Builder<INFERENCE> model(byte[] bytes);
+
+    }
+
+    @Override
+    public default InferenceMetadata getMetadata() {
+        return new InferenceMetadata(this.getClass().getName());
+    }
+
 }

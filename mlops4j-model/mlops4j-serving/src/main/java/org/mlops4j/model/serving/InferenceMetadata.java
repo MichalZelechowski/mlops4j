@@ -15,13 +15,27 @@
  */
 package org.mlops4j.model.serving;
 
-import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-public interface Input<VALUE> extends Serializable {
+public class InferenceMetadata extends Metadata<Inference> {
 
-    public VALUE getValue();
+    public InferenceMetadata(String component) {
+        super(component, Collections.EMPTY_LIST);
+    }
+
+    public InferenceMetadata(String component, List<Pair<String, Object>> parameters) {
+        super(component, parameters);
+    }
+
+    public Inference construct(byte[] bytes) {
+        Inference.Builder<Inference> builder = (Inference.Builder) this.getBuilder();
+        return builder.model(bytes).build();
+    }
+
 }

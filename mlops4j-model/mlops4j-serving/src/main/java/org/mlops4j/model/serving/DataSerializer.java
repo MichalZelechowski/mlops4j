@@ -15,19 +15,14 @@
  */
 package org.mlops4j.model.serving;
 
-import lombok.Getter;
-
 /**
  *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
+ * @param <TYPE>
  */
-@Getter
-public class Response {
+public interface DataSerializer<TYPE> {
 
-    private final Prediction output;
+    public TYPE construct(byte[] bytes);
 
-    public Response(Prediction output) {
-        this.output = output;
-    }
-
+    public byte[] hydrolize(TYPE object);
 }

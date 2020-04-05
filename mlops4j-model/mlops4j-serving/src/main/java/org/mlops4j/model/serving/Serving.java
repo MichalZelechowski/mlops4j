@@ -15,9 +15,8 @@
  */
 package org.mlops4j.model.serving;
 
-import com.google.common.collect.Lists;
-import org.datavec.api.records.impl.Record;
-import org.datavec.api.writable.FloatWritable;
+import org.datavec.api.records.Record;
+import org.nd4j.linalg.api.ndarray.INDArray;
 
 /**
  *
@@ -25,19 +24,49 @@ import org.datavec.api.writable.FloatWritable;
  */
 public class Serving {
 
-    public Output infer(Input input) {
+    private final TrainedModel modelReference;
+
+    private Serving(TrainedModel modelReference) {
+        this.modelReference = modelReference;
+    }
+
+    public Prediction infer(Features input) {
         if (input instanceof SingleInput) {
             Record record = ((SingleInput) input).getRecord();
-            float inputValue = record.getRecord().get(0).toFloat();
-            return new SingleOutput(new Record(Lists.newArrayList(new FloatWritable(inputValue * inputValue)), null));
+            INDArray inputArray = this.prepareData(record);
+            INDArray outputArray = this.getOutput(inputArray);
+            Record outputRecord = this.prepareData(outputArray);
+            return new SinglePrediction(outputRecord);
         }
         throw new IllegalArgumentException("Input " + input + " is not yet supported");
     }
 
+    private INDArray prepareData(Record record) {
+        return this.modelReference.prepareData(record);
+    }
+
+    private INDArray getOutput(INDArray input) {
+        return this.modelReference.output(input);
+    }
+
+    private Record prepareData(INDArray array) {
+        return this.modelReference.prepareData(array);
+    }
+
     public static class Builder implements Cloneable {
 
+        private TrainedModel modelReference;
+
         public Serving build() {
-            return new Serving();
+            if (this.modelReference == null) {
+                throw new NullPointerException("Model reference not set");
+            }
+            return new Serving(this.modelReference);
+        }
+
+        public Builder trainedModel(TrainedModel modelReference) {
+            this.modelReference = modelReference;
+            return this;
         }
     }
 

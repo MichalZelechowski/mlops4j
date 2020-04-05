@@ -17,8 +17,6 @@ package org.mlops4j.model.serving;
 
 import lombok.Getter;
 import org.datavec.api.records.impl.Record;
-import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.factory.Nd4j;
 
 /**
  *
@@ -27,13 +25,13 @@ import org.nd4j.linalg.factory.Nd4j;
 @Getter
 public class Request {
 
-    private final Input input;
+    private final Features input;
 
     public Request(Record record) {
         this.input = new SingleInput(record);
     }
 
-    public Request(Input input) {
+    public Request(Features input) {
         this.input = input;
     }
 

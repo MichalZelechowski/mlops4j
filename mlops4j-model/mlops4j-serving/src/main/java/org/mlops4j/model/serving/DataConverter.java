@@ -15,20 +15,21 @@
  */
 package org.mlops4j.model.serving;
 
-import java.util.Collections;
-import lombok.EqualsAndHashCode;
-import org.datavec.api.records.impl.Record;
-import org.datavec.api.writable.FloatWritable;
-import org.datavec.api.writable.Writable;
+import org.datavec.api.records.Record;
+import org.nd4j.linalg.api.ndarray.INDArray;
 
 /**
  *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-public class NumericalOutput extends SingleOutput {
+public interface DataConverter extends HasMetadata<DataConverterMetadata> {
 
-    public NumericalOutput(float value) {
-        super(new Record(Collections.singletonList(new FloatWritable(value)), null));
+    public INDArray map(Record record);
+
+    public Record map(INDArray array);
+
+    @Override
+    public default DataConverterMetadata getMetadata() {
+        return new DataConverterMetadata(this.getClass().getName());
     }
-
 }

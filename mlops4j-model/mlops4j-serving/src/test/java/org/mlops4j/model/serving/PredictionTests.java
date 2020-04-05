@@ -15,16 +15,16 @@
  */
 package org.mlops4j.model.serving;
 
+import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.datavec.api.records.impl.Record;
-import org.datavec.api.writable.DoubleWritable;
 import org.datavec.api.writable.FloatWritable;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.BeforeAll;
+import org.datavec.api.writable.NDArrayWritable;
+import org.datavec.api.writable.Writable;
+import org.datavec.api.writable.WritableType;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.ops.transforms.Transforms;
 import org.nd4j.shade.protobuf.common.collect.Lists;
 
 /**
@@ -34,14 +34,65 @@ import org.nd4j.shade.protobuf.common.collect.Lists;
 public class PredictionTests {
 
     @Test
-    public void createPredictionFromServing() {
-        Serving serving = new Serving.Builder().build();
+    public void createPredictionFromServingWithModel() {
+        ModelReference reference = new ModelReference.Builder().name("testModel").version("1.0")
+                .converter(new INDArrayDataConverter())
+                .inference(new SqrInference())
+                .build();
+
+        ModelRegistry registry = new ModelRegistry.Builder()
+                .storage(new InMemoryKeyValueStorage())
+                .serializer(new JavaDataSerializer())
+                .build();
+        registry.addModel(reference);
+
+        TrainedModel modelReference = new TrainedModel.Builder().name("testModel").version("1.0").modelRegistry(registry).build();
+        Serving serving = new Serving.Builder().trainedModel(modelReference).build();
         PredictionService service = new PredictionService.Builder().serving(serving).local().build();
 
         Request request = new Request(new Record(Lists.newArrayList(new FloatWritable(2.0f)), null));
         Response response = service.predict(request);
 
         assertThat(response).isNotNull();
-        assertThat(response.getOutput()).isEqualTo(new NumericalOutput(4.0f));
+        Record outputRecord = ((Record) response.getOutput().getValue());
+        assertThat(outputRecord.getRecord()).hasSize(1);
+        List<Writable> resultArray = outputRecord.getRecord();
+        assertThat(resultArray.get(0).getType()).isEqualTo(WritableType.NDArray);
+        NDArrayWritable ndResultArray = (NDArrayWritable) resultArray.get(0);
+        assertThat(ndResultArray.get().getFloat(0, 0)).isEqualTo(4.0f);
+        assertThat(ndResultArray.get().shape()).isEqualTo(new long[]{1, 1});
+    }
+
+    public static class SqrInference implements Inference {
+
+        @Override
+        public INDArray output(INDArray input) {
+            return Transforms.pow(input, 2.0, true);
+        }
+
+        @Override
+        public byte[] getModelBinary() {
+            return new byte[1];
+        }
+
+        public static class Builder implements Inference.Builder {
+
+            @Override
+            public Inference build() {
+                return new SqrInference();
+            }
+
+            @Override
+            public Builder model(byte[] bytes) {
+                return this;
+            }
+
+            @Override
+            public ComponentBuilder fromParameters(List parameters) {
+                return this;
+            }
+
+        }
+
     }
 }

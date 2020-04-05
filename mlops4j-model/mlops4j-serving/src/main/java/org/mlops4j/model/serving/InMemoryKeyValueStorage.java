@@ -15,19 +15,33 @@
  */
 package org.mlops4j.model.serving;
 
-import lombok.Getter;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import org.mlops4j.model.serving.KeyValueStorage;
 
 /**
  *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-@Getter
-public class Response {
+public class InMemoryKeyValueStorage implements KeyValueStorage {
 
-    private final Prediction output;
+    private final Map<String, byte[]> container;
 
-    public Response(Prediction output) {
-        this.output = output;
+    public InMemoryKeyValueStorage() {
+        this.container = new ConcurrentHashMap<>();
+    }
+
+    @Override
+    public Optional<byte[]> get(String... key) {
+        final String constructedKey = this.constructKey(key);
+        return Optional.ofNullable(container.get(constructedKey));
+    }
+
+    @Override
+    public void put(byte[] bytes, String... key) {
+        final String constructedKey = this.constructKey(key);
+        this.container.put(constructedKey, bytes);
     }
 
 }

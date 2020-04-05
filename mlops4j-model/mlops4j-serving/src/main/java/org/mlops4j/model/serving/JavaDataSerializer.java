@@ -15,19 +15,20 @@
  */
 package org.mlops4j.model.serving;
 
-import lombok.Getter;
+import java.io.Serializable;
+import org.apache.commons.lang3.SerializationUtils;
 
-/**
- *
- * @author Michał Żelechowski <MichalZelechowski@github.com>
- */
-@Getter
-public class Response {
 
-    private final Prediction output;
+public class JavaDataSerializer<TYPE extends Serializable> implements DataSerializer<TYPE> {
 
-    public Response(Prediction output) {
-        this.output = output;
+    @Override
+    public TYPE construct(byte[] bytes) {
+        return SerializationUtils.deserialize(bytes);
     }
 
+    @Override
+    public byte[] hydrolize(TYPE object) {
+        return SerializationUtils.serialize(object);
+    }
+    
 }

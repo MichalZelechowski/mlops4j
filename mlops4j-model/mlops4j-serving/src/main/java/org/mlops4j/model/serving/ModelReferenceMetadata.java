@@ -15,19 +15,30 @@
  */
 package org.mlops4j.model.serving;
 
-import lombok.Getter;
-
 /**
  *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-@Getter
-public class Response {
+public class ModelReferenceMetadata extends Metadata<ModelReference> {
 
-    private final Prediction output;
+    private final String name;
+    private final String version;
+    private final DataConverterMetadata dataConverter;
+    private final InferenceMetadata inference;
 
-    public Response(Prediction output) {
-        this.output = output;
+    public ModelReferenceMetadata(String name, String version, DataConverterMetadata dataConverter, InferenceMetadata inference) {
+        this.name = name;
+        this.version = version;
+        this.dataConverter = dataConverter;
+        this.inference = inference;
+    }
+    
+    public DataConverter getConverter() {
+        return dataConverter.construct();
+    }
+
+    public Inference getInference(byte[] bytes) {
+        return inference.construct(bytes);
     }
 
 }
