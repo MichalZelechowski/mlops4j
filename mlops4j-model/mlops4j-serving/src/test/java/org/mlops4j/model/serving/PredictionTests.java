@@ -15,6 +15,7 @@
  */
 package org.mlops4j.model.serving;
 
+import com.google.common.collect.Lists;
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.datavec.api.records.impl.Record;
@@ -25,7 +26,6 @@ import org.datavec.api.writable.WritableType;
 import org.junit.jupiter.api.Test;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.ops.transforms.Transforms;
-import org.nd4j.shade.protobuf.common.collect.Lists;
 
 /**
  *
@@ -35,7 +35,9 @@ public class PredictionTests {
 
     @Test
     public void createPredictionFromServingWithModel() {
-        ModelReference reference = new ModelReference.Builder().name("testModel").version("1.0")
+        ModelReference reference = new ModelReference.Builder()
+                .name("testModel")
+                .version("1.0")
                 .converter(new INDArrayDataConverter())
                 .inference(new SqrInference())
                 .build();
@@ -46,9 +48,20 @@ public class PredictionTests {
                 .build();
         registry.addModel(reference);
 
-        TrainedModel modelReference = new TrainedModel.Builder().name("testModel").version("1.0").modelRegistry(registry).build();
-        Serving serving = new Serving.Builder().trainedModel(modelReference).build();
-        PredictionService service = new PredictionService.Builder().serving(serving).local().build();
+        TrainedModel modelReference = new TrainedModel.Builder()
+                .name("testModel")
+                .version("1.0")
+                .modelRegistry(registry)
+                .build();
+        
+        Serving serving = new Serving.Builder()
+                .trainedModel(modelReference)
+                .build();
+        
+        PredictionService service = new PredictionService.Builder()
+                .serving(serving)
+                .local()
+                .build();
 
         Request request = new Request(new Record(Lists.newArrayList(new FloatWritable(2.0f)), null));
         Response response = service.predict(request);
