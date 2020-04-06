@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.mlops4j.model.serving;
+package org.mlops4j.model.registry;
 
-import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.mlops4j.data.metadata.HasMetadata;
+
+import java.util.Optional;
 
 /**
  *
@@ -26,7 +28,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class ModelReference implements HasMetadata {
+public class ModelReference implements HasMetadata<ModelReferenceMetadata> {
 
     private final String name;
     private final String version;
@@ -68,7 +70,7 @@ public class ModelReference implements HasMetadata {
         public ModelReference build() {
             this.name = Optional.ofNullable(this.name).orElseThrow(() -> new IllegalArgumentException("Name not set"));
             this.version = Optional.ofNullable(this.version).orElseThrow(() -> new IllegalArgumentException("Version not set"));
-            this.converter = Optional.ofNullable(this.converter).orElseGet(() -> new INDArrayDataConverter());
+            this.converter = Optional.ofNullable(this.converter).orElseGet(INDArrayDataConverter::new);
             this.inference = Optional.ofNullable(this.inference).orElseThrow(() -> new IllegalArgumentException("Inference not set"));
             return new ModelReference(name, version, converter, inference);
         }

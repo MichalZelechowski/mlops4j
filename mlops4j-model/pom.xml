@@ -14,5 +14,6 @@
         <module>mlops4j-validation</module>
         <module>mlops4j-serving</module>
         <module>mlops4j-monitoring</module>
+        <module>mlops4j-model-registry</module>
     </modules>
 </project>

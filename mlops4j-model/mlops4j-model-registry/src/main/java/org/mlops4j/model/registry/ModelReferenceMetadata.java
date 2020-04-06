@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.mlops4j.model.serving;
+package org.mlops4j.model.registry;
+
+import org.mlops4j.data.metadata.Metadata;
 
 /**
  *

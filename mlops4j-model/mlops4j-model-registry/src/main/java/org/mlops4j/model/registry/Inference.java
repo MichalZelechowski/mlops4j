@@ -13,23 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.mlops4j.model.serving;
+package org.mlops4j.model.registry;
 
-import org.datavec.api.records.Record;
+import org.mlops4j.data.metadata.ComponentBuilder;
+import org.mlops4j.data.metadata.HasMetadata;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 /**
  *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-public interface DataConverter extends HasMetadata<DataConverterMetadata> {
+public interface Inference extends HasMetadata<InferenceMetadata> {
 
-    public INDArray map(Record record);
+    INDArray output(INDArray input);
 
-    public Record map(INDArray array);
+    byte[] getModelBinary();
+
+    interface Builder<INFERENCE extends Inference> extends ComponentBuilder<INFERENCE> {
+
+        Builder<INFERENCE> model(byte[] bytes);
+
+    }
 
     @Override
-    public default DataConverterMetadata getMetadata() {
-        return new DataConverterMetadata(this.getClass().getName());
+    default InferenceMetadata getMetadata() {
+        return new InferenceMetadata(this.getClass().getName());
     }
+
 }

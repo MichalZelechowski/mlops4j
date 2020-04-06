@@ -13,14 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.mlops4j.model.serving;
+package org.mlops4j.data.metadata;
+
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.List;
 
 /**
  *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
- * @param <METADATA>
+ * @param <TYPE>
  */
-public interface HasMetadata<METADATA extends Metadata> {
-
-    public METADATA getMetadata();
+public interface ComponentBuilder<TYPE> {
+    
+    TYPE build();
+    
+    ComponentBuilder<TYPE> fromParameters(List<Pair<String, Object>> parameters);
 }

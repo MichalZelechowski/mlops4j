@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.mlops4j.model.serving;
+package org.mlops4j.model.registry;
 
-import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+
+import java.util.Optional;
 
 /**
  *
@@ -65,7 +66,7 @@ public class ModelRegistry {
     public static class Builder {
 
         private KeyValueStorage storage;
-        private DataSerializer serializer;
+        private DataSerializer<?> serializer;
 
         public Builder storage(KeyValueStorage storage) {
             this.storage = storage;
@@ -73,7 +74,7 @@ public class ModelRegistry {
         }
         
         
-        public Builder serializer(DataSerializer serializer) {
+        public Builder serializer(DataSerializer<?> serializer) {
             this.serializer = serializer;
             return this;
         }

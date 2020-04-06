@@ -18,6 +18,8 @@ package org.mlops4j.model.serving;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.datavec.api.records.Record;
+import org.mlops4j.model.registry.ModelReference;
+import org.mlops4j.model.registry.ModelRegistry;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 /**

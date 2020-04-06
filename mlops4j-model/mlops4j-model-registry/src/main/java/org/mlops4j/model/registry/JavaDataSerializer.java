@@ -13,29 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.mlops4j.model.serving;
+package org.mlops4j.model.registry;
 
-import org.nd4j.linalg.api.ndarray.INDArray;
+import org.apache.commons.lang3.SerializationUtils;
 
-/**
- *
- * @author Michał Żelechowski <MichalZelechowski@github.com>
- */
-public interface Inference extends HasMetadata<InferenceMetadata> {
+import java.io.Serializable;
 
-    public INDArray output(INDArray input);
 
-    public byte[] getModelBinary();
+public class JavaDataSerializer<TYPE extends Serializable> implements DataSerializer<TYPE> {
 
-    public static interface Builder<INFERENCE extends Inference> extends ComponentBuilder<INFERENCE> {
-
-        public Builder<INFERENCE> model(byte[] bytes);
-
+    @Override
+    public TYPE construct(byte[] bytes) {
+        return SerializationUtils.deserialize(bytes);
     }
 
     @Override
-    public default InferenceMetadata getMetadata() {
-        return new InferenceMetadata(this.getClass().getName());
+    public byte[] hydrolize(TYPE object) {
+        return SerializationUtils.serialize(object);
     }
-
+    
 }

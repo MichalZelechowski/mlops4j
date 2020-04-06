@@ -13,29 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.mlops4j.model.serving;
+package org.mlops4j.model.registry;
 
-import java.util.Collections;
-import java.util.List;
-import org.apache.commons.lang3.tuple.Pair;
+import org.datavec.api.records.Record;
+import org.mlops4j.data.metadata.HasMetadata;
+import org.nd4j.linalg.api.ndarray.INDArray;
 
 /**
  *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-public class InferenceMetadata extends Metadata<Inference> {
+public interface DataConverter extends HasMetadata<DataConverterMetadata> {
 
-    public InferenceMetadata(String component) {
-        super(component, Collections.EMPTY_LIST);
+    INDArray map(Record record);
+
+    Record map(INDArray array);
+
+    @Override
+    default DataConverterMetadata getMetadata() {
+        return new DataConverterMetadata(this.getClass().getName());
     }
-
-    public InferenceMetadata(String component, List<Pair<String, Object>> parameters) {
-        super(component, parameters);
-    }
-
-    public Inference construct(byte[] bytes) {
-        Inference.Builder<Inference> builder = (Inference.Builder) this.getBuilder();
-        return builder.model(bytes).build();
-    }
-
 }

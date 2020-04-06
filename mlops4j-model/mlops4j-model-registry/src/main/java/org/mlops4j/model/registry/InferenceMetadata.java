@@ -13,16 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.mlops4j.model.serving;
+package org.mlops4j.model.registry;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.mlops4j.data.metadata.Metadata;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
- * @param <TYPE>
  */
-public interface DataSerializer<TYPE> {
+public class InferenceMetadata extends Metadata<Inference> {
 
-    public TYPE construct(byte[] bytes);
+    public InferenceMetadata(String component) {
+        super(component, Collections.EMPTY_LIST);
+    }
 
-    public byte[] hydrolize(TYPE object);
+    public InferenceMetadata(String component, List<Pair<String, Object>> parameters) {
+        super(component, parameters);
+    }
+
+    public Inference construct(byte[] bytes) {
+        Inference.Builder<Inference> builder = (Inference.Builder) this.getBuilder();
+        return builder.model(bytes).build();
+    }
+
 }

@@ -12,5 +12,6 @@
         <module>mlops4j-extraction</module>
         <module>mlops4j-analysis</module>
         <module>mlops4j-preparation</module>
+        <module>mlops4j-metadata</module>
     </modules>
 </project>

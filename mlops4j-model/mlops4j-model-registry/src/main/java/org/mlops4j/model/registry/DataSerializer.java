@@ -13,19 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.mlops4j.model.serving;
-
-import java.util.List;
-import org.apache.commons.lang3.tuple.Pair;
+package org.mlops4j.model.registry;
 
 /**
  *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  * @param <TYPE>
  */
-public interface ComponentBuilder<TYPE> {
-    
-    public TYPE build();
-    
-    public ComponentBuilder<TYPE> fromParameters(List<Pair<String, Object>> parameters);
+public interface DataSerializer<TYPE> {
+
+    TYPE construct(byte[] bytes);
+
+    byte[] hydrolize(TYPE object);
 }

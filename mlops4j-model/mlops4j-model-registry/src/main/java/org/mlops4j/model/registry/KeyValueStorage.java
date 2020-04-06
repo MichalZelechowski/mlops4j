@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.mlops4j.model.serving;
+package org.mlops4j.model.registry;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -26,9 +26,9 @@ import java.util.stream.Stream;
  */
 public interface KeyValueStorage {
 
-    public Optional<byte[]> get(String... key);
+    Optional<byte[]> get(String... key);
 
-    public void put(byte[] bytes, String... key);
+    void put(byte[] bytes, String... key);
     
     default void validateKey(String... key) {
         if (key.length == 0) {
@@ -38,7 +38,7 @@ public interface KeyValueStorage {
             throw new IllegalArgumentException(String.format("Key parts %s contain separator [%s]", Arrays.toString(key), this.getSeparator()));
         }
         if (Stream.of(key).anyMatch(part -> part.contains(".."))) {
-            throw new IllegalArgumentException(String.format("Key parts %s contain [..]", Arrays.toString(key), this.getSeparator()));
+            throw new IllegalArgumentException(String.format("Key parts %s contain [..]", Arrays.toString(key)));
         }
     }
     

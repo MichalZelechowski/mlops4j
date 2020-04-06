@@ -13,24 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.mlops4j.model.serving;
+package org.mlops4j.model.registry;
 
-import java.util.Collections;
-import java.util.List;
-import org.apache.commons.lang3.tuple.Pair;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-public class DataConverterMetadata extends Metadata<DataConverter> {
+public class InMemoryKeyValueStorage implements KeyValueStorage {
 
-    public DataConverterMetadata(String component) {
-        super(component, Collections.EMPTY_LIST);
+    private final Map<String, byte[]> container;
+
+    public InMemoryKeyValueStorage() {
+        this.container = new ConcurrentHashMap<>();
     }
 
-    public DataConverterMetadata(String component, List<Pair<String, Object>> parameters) {
-        super(component, parameters);
+    @Override
+    public Optional<byte[]> get(String... key) {
+        final String constructedKey = this.constructKey(key);
+        return Optional.ofNullable(container.get(constructedKey));
+    }
+
+    @Override
+    public void put(byte[] bytes, String... key) {
+        final String constructedKey = this.constructKey(key);
+        this.container.put(constructedKey, bytes);
     }
 
 }

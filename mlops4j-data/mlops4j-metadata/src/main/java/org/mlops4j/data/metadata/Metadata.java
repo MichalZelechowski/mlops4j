@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.mlops4j.model.serving;
+package org.mlops4j.data.metadata;
 
 import com.google.common.base.Throwables;
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.io.Serializable;
 import java.util.List;
-import org.apache.commons.lang3.tuple.Pair;
 
 /**
  *

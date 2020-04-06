@@ -13,32 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.mlops4j.model.serving;
 
-import com.google.common.collect.Lists;
-import org.datavec.api.records.impl.Record;
-import org.datavec.api.writable.FloatWritable;
-import org.datavec.api.writable.NDArrayWritable;
-import org.datavec.api.writable.Writable;
-import org.datavec.api.writable.WritableType;
+package org.mlops4j.model.validation;
+
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mlops4j.data.metadata.ComponentBuilder;
-import org.mlops4j.model.registry.*;
+import org.mlops4j.model.evaluation.ModelEvaluation;
+import org.mlops4j.model.registry.INDArrayDataConverter;
+import org.mlops4j.model.registry.Inference;
+import org.mlops4j.model.registry.ModelReference;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.ops.transforms.Transforms;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 /**
- *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-public class PredictionTests {
+public class ValidationTests {
 
     @Test
-    public void createPredictionFromServingWithModel() {
+    public void validateModelAgainstBaseline() {
         ModelReference reference = new ModelReference.Builder()
                 .name("testModel")
                 .version("1.0")
@@ -46,38 +42,16 @@ public class PredictionTests {
                 .inference(new SqrInference())
                 .build();
 
-        ModelRegistry registry = new ModelRegistry.Builder()
-                .storage(new InMemoryKeyValueStorage())
-                .serializer(new JavaDataSerializer())
-                .build();
-        registry.addModel(reference);
-
-        TrainedModel modelReference = new TrainedModel.Builder()
-                .name("testModel")
-                .version("1.0")
-                .modelRegistry(registry)
-                .build();
-        
-        Serving serving = new Serving.Builder()
-                .trainedModel(modelReference)
-                .build();
-        
-        PredictionService service = new PredictionService.Builder()
-                .serving(serving)
-                .local()
+        ModelEvaluation evaluation = null;
+        ComparationStrategy strategy = new BaselineComparationStrategy(evaluation);
+        ModelValidator validator = new ModelValidator.Builder()
+                .comparationStrategy(strategy)
                 .build();
 
-        Request request = new Request(new Record(Lists.newArrayList(new FloatWritable(2.0f)), null));
-        Response response = service.predict(request);
+        ValidationResult result = validator.validate(reference);
 
-        assertThat(response).isNotNull();
-        Record outputRecord = ((Record) response.getOutput().getValue());
-        assertThat(outputRecord.getRecord()).hasSize(1);
-        List<Writable> resultArray = outputRecord.getRecord();
-        assertThat(resultArray.get(0).getType()).isEqualTo(WritableType.NDArray);
-        NDArrayWritable ndResultArray = (NDArrayWritable) resultArray.get(0);
-        assertThat(ndResultArray.get().getFloat(0, 0)).isEqualTo(4.0f);
-        assertThat(ndResultArray.get().shape()).isEqualTo(new long[]{1, 1});
+        Assertions.assertThat(result.getStatus()).isEqualTo(ValidationStatus.ACCEPTED);
+        Assertions.assertThat(result.getMessage()).contains("meets baseline");
     }
 
     public static class SqrInference implements Inference {
