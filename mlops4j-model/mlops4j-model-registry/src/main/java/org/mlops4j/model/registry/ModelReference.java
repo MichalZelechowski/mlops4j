@@ -15,15 +15,19 @@
  */
 package org.mlops4j.model.registry;
 
+import com.google.common.collect.Lists;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.mlops4j.data.metadata.HasMetadata;
+import org.mlops4j.model.evaluation.ModelEvaluation;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
- *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
 @Getter
@@ -34,10 +38,15 @@ public class ModelReference implements HasMetadata<ModelReferenceMetadata> {
     private final String version;
     private final DataConverter converter;
     private final Inference inference;
+    private final List<ModelEvaluation> evaluations;
 
     @Override
     public ModelReferenceMetadata getMetadata() {
         return new ModelReferenceMetadata(this.name, this.version, this.converter.getMetadata(), this.inference.getMetadata());
+    }
+
+    public Stream<ModelEvaluation> getEvaluations() {
+        return this.evaluations.stream();
     }
 
     public static class Builder implements Cloneable {
@@ -46,6 +55,7 @@ public class ModelReference implements HasMetadata<ModelReferenceMetadata> {
         private Inference inference;
         private String version;
         private String name;
+        private List<ModelEvaluation> evaluations = Lists.newLinkedList();
 
         public Builder converter(DataConverter converter) {
             this.converter = converter;
@@ -67,12 +77,17 @@ public class ModelReference implements HasMetadata<ModelReferenceMetadata> {
             return this;
         }
 
+        public Builder evaluations(ModelEvaluation... evaluations) {
+            this.evaluations.addAll(Arrays.asList(evaluations));
+            return this;
+        }
+
         public ModelReference build() {
             this.name = Optional.ofNullable(this.name).orElseThrow(() -> new IllegalArgumentException("Name not set"));
             this.version = Optional.ofNullable(this.version).orElseThrow(() -> new IllegalArgumentException("Version not set"));
             this.converter = Optional.ofNullable(this.converter).orElseGet(INDArrayDataConverter::new);
             this.inference = Optional.ofNullable(this.inference).orElseThrow(() -> new IllegalArgumentException("Inference not set"));
-            return new ModelReference(name, version, converter, inference);
+            return new ModelReference(name, version, converter, inference, evaluations);
         }
 
     }

@@ -1,28 +1,33 @@
 package org.mlops4j.model.validation;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.mlops4j.model.registry.ModelReference;
 
 import java.util.Optional;
 
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ModelValidator {
-    private final ComparationStrategy strategy;
+    private final ValidationStrategy strategy;
 
     public ValidationResult validate(ModelReference reference) {
-        return new ValidationResult(ValidationStatus.ACCEPTED, "meets baseline");
+        ValidationStatus status = this.strategy.validate(reference);
+        String message = (status == ValidationStatus.ACCEPTED) ?
+                String.format("%s/%s meets baseline", reference.getName(), reference.getVersion()) :
+                String.format("%s/%s does not meet baseline", reference.getName(), reference.getVersion());
+        return new ValidationResult(status, message);
     }
 
     public static class Builder {
-        private ComparationStrategy strategy;
+        private ValidationStrategy strategy;
 
-        public Builder comparationStrategy(ComparationStrategy strategy) {
+        public Builder validationStrategy(ValidationStrategy strategy) {
             this.strategy = strategy;
             return this;
         }
 
         public ModelValidator build() {
-            this.strategy = Optional.ofNullable(this.strategy).orElseThrow(() -> new NullPointerException("Comparation strategy is not set"));
+            this.strategy = Optional.ofNullable(this.strategy).orElseThrow(() -> new NullPointerException("Validation strategy is not set"));
             return new ModelValidator(this.strategy);
         }
     }

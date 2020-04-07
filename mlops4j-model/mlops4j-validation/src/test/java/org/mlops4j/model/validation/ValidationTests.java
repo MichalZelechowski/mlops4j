@@ -35,17 +35,36 @@ public class ValidationTests {
 
     @Test
     public void validateModelAgainstBaseline() {
+        ModelEvaluation evaluation = new ModelEvaluation() {
+        };
+
         ModelReference reference = new ModelReference.Builder()
                 .name("testModel")
                 .version("1.0")
                 .converter(new INDArrayDataConverter())
                 .inference(new SqrInference())
+                .evaluations(evaluation)
                 .build();
 
-        ModelEvaluation evaluation = null;
-        ComparationStrategy strategy = new BaselineComparationStrategy(evaluation);
+        ComparisonStrategy comparisonStrategy = new ComparisonStrategy() {
+            @Override
+            public boolean areComparable(ModelEvaluation a, ModelEvaluation b) {
+                return true;
+            }
+
+            @Override
+            public ComparisonStatus compare(ModelEvaluation a, ModelEvaluation b) {
+                return ComparisonStatus.BETTER;
+            }
+        };
+
+        ValidationStrategy strategy = new BaselineValidationStrategy.Builder()
+                .evaluation(evaluation)
+                .comparisonStrategy(comparisonStrategy)
+                .build();
+
         ModelValidator validator = new ModelValidator.Builder()
-                .comparationStrategy(strategy)
+                .validationStrategy(strategy)
                 .build();
 
         ValidationResult result = validator.validate(reference);

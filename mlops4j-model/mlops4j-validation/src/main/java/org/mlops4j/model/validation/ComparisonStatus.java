@@ -15,10 +15,11 @@
  *
  */
 
-package org.mlops4j.model.evaluation;
+package org.mlops4j.model.validation;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-public interface ModelEvaluation {
+public enum ComparisonStatus {
+    BETTER, WORSE, EQUAL, INCONCLUSIVE
 }
