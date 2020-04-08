@@ -54,6 +54,7 @@
     <modules>
         <module>mlops4j-data</module>
         <module>mlops4j-model</module>
+        <module>mlops4j-api</module>
     </modules>
     <dependencies>
         <dependency>

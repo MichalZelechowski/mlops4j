@@ -19,8 +19,10 @@ import com.google.common.collect.Lists;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.mlops4j.api.DataConverter;
+import org.mlops4j.api.Inference;
+import org.mlops4j.api.ModelEvaluation;
 import org.mlops4j.data.metadata.HasMetadata;
-import org.mlops4j.model.evaluation.ModelEvaluation;
 
 import java.util.Arrays;
 import java.util.List;
@@ -47,6 +49,10 @@ public class ModelReference implements HasMetadata<ModelReferenceMetadata> {
 
     public Stream<ModelEvaluation> getEvaluations() {
         return this.evaluations.stream();
+    }
+
+    public void addEvaluation(ModelEvaluation evaluation) {
+        this.evaluations.add(evaluation);
     }
 
     public static class Builder implements Cloneable {

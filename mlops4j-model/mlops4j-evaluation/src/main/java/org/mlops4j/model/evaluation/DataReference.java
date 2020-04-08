@@ -15,15 +15,12 @@
  *
  */
 
-package org.mlops4j.model.validation;
-
-import org.mlops4j.api.ModelEvaluation;
+package org.mlops4j.model.evaluation;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-public interface ComparisonStrategy {
-    boolean areComparable(ModelEvaluation a, ModelEvaluation b);
 
-    ComparisonStatus compare(ModelEvaluation a, ModelEvaluation b);
+public interface DataReference {
+    String getName();
 }

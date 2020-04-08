@@ -15,6 +15,10 @@
  */
 package org.mlops4j.model.registry;
 
+import org.mlops4j.api.DataConverter;
+import org.mlops4j.api.DataConverterMetadata;
+import org.mlops4j.api.Inference;
+import org.mlops4j.api.InferenceMetadata;
 import org.mlops4j.data.metadata.Metadata;
 
 /**

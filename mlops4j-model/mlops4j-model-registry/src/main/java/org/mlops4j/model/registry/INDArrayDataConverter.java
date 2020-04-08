@@ -18,6 +18,7 @@ package org.mlops4j.model.registry;
 import org.apache.commons.lang3.tuple.Pair;
 import org.datavec.api.records.Record;
 import org.datavec.api.util.ndarray.RecordConverter;
+import org.mlops4j.api.DataConverter;
 import org.mlops4j.data.metadata.ComponentBuilder;
 import org.nd4j.linalg.api.ndarray.INDArray;
 

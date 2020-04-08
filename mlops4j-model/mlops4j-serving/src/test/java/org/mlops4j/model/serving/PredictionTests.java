@@ -22,6 +22,7 @@ import org.datavec.api.writable.NDArrayWritable;
 import org.datavec.api.writable.Writable;
 import org.datavec.api.writable.WritableType;
 import org.junit.jupiter.api.Test;
+import org.mlops4j.api.Inference;
 import org.mlops4j.data.metadata.ComponentBuilder;
 import org.mlops4j.model.registry.*;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -50,7 +51,7 @@ public class PredictionTests {
                 .storage(new InMemoryKeyValueStorage())
                 .serializer(new JavaDataSerializer())
                 .build();
-        registry.addModel(reference);
+        registry.putModel(reference);
 
         TrainedModel modelReference = new TrainedModel.Builder()
                 .name("testModel")

@@ -15,15 +15,18 @@
  *
  */
 
-package org.mlops4j.model.validation;
+package org.mlops4j.api;
 
-import org.mlops4j.api.ModelEvaluation;
+import org.mlops4j.data.metadata.Metadata;
+
+import java.util.Collections;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-public interface ComparisonStrategy {
-    boolean areComparable(ModelEvaluation a, ModelEvaluation b);
 
-    ComparisonStatus compare(ModelEvaluation a, ModelEvaluation b);
+public class ModelEvaluationMetadata extends Metadata<ModelEvaluation> {
+    public ModelEvaluationMetadata(String component) {
+        super(component, Collections.EMPTY_LIST);
+    }
 }

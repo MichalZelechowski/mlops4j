@@ -14,16 +14,24 @@
  *  limitations under the License.
  *
  */
+package org.mlops4j.api;
 
-package org.mlops4j.model.validation;
-
-import org.mlops4j.api.ModelEvaluation;
+import org.datavec.api.records.Record;
+import org.mlops4j.data.metadata.HasMetadata;
+import org.nd4j.linalg.api.ndarray.INDArray;
 
 /**
+ *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-public interface ComparisonStrategy {
-    boolean areComparable(ModelEvaluation a, ModelEvaluation b);
+public interface DataConverter extends HasMetadata<DataConverterMetadata> {
 
-    ComparisonStatus compare(ModelEvaluation a, ModelEvaluation b);
+    INDArray map(Record record);
+
+    Record map(INDArray array);
+
+    @Override
+    default DataConverterMetadata getMetadata() {
+        return new DataConverterMetadata(this.getClass().getName());
+    }
 }

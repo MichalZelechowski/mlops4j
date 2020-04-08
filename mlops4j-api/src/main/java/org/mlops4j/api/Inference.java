@@ -14,11 +14,31 @@
  *  limitations under the License.
  *
  */
+package org.mlops4j.api;
 
-package org.mlops4j.model.evaluation;
+import org.mlops4j.data.metadata.ComponentBuilder;
+import org.mlops4j.data.metadata.HasMetadata;
+import org.nd4j.linalg.api.ndarray.INDArray;
 
 /**
+ *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-public interface ModelEvaluation {
+public interface Inference extends HasMetadata<InferenceMetadata> {
+
+    INDArray output(INDArray input);
+
+    byte[] getModelBinary();
+
+    interface Builder<INFERENCE extends Inference> extends ComponentBuilder<INFERENCE> {
+
+        Builder<INFERENCE> model(byte[] bytes);
+
+    }
+
+    @Override
+    default InferenceMetadata getMetadata() {
+        return new InferenceMetadata(this.getClass().getName());
+    }
+
 }

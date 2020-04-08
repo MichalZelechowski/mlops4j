@@ -14,16 +14,26 @@
  *  limitations under the License.
  *
  */
+package org.mlops4j.api;
 
-package org.mlops4j.model.validation;
+import org.apache.commons.lang3.tuple.Pair;
+import org.mlops4j.data.metadata.Metadata;
 
-import org.mlops4j.api.ModelEvaluation;
+import java.util.Collections;
+import java.util.List;
 
 /**
+ *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-public interface ComparisonStrategy {
-    boolean areComparable(ModelEvaluation a, ModelEvaluation b);
+public class DataConverterMetadata extends Metadata<DataConverter> {
 
-    ComparisonStatus compare(ModelEvaluation a, ModelEvaluation b);
+    public DataConverterMetadata(String component) {
+        super(component, Collections.EMPTY_LIST);
+    }
+
+    public DataConverterMetadata(String component, List<Pair<String, Object>> parameters) {
+        super(component, parameters);
+    }
+
 }

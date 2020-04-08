@@ -55,7 +55,7 @@ public class ModelRegistry {
                 .build());
     }
 
-    public void addModel(ModelReference reference) {
+    public void putModel(ModelReference reference) {
         byte[] metadata = serializer.hydrolize(reference.getMetadata());
         storage.put(metadata, MODEL, TRAINED, reference.getName(), reference.getVersion(), METADATA);
         

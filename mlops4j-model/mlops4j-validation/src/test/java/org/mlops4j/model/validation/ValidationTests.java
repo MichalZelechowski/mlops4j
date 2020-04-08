@@ -18,10 +18,10 @@ package org.mlops4j.model.validation;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mlops4j.api.Inference;
+import org.mlops4j.api.ModelEvaluation;
 import org.mlops4j.data.metadata.ComponentBuilder;
-import org.mlops4j.model.evaluation.ModelEvaluation;
 import org.mlops4j.model.registry.INDArrayDataConverter;
-import org.mlops4j.model.registry.Inference;
 import org.mlops4j.model.registry.ModelReference;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.ops.transforms.Transforms;
