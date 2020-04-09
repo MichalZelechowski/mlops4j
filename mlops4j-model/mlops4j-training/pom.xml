@@ -8,4 +8,18 @@
     </parent>
     <artifactId>mlops4j-training</artifactId>
     <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.mlops4j</groupId>
+            <artifactId>mlops4j-preparation</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mlops4j</groupId>
+            <artifactId>mlops4j-model-registry</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 </project>

@@ -15,7 +15,6 @@
  */
 package org.mlops4j.data.metadata;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.Serializable;
@@ -49,8 +48,7 @@ public abstract class Metadata<TYPE> implements Serializable {
             ComponentBuilder<TYPE> builder = builderClass.getConstructor().newInstance().fromParameters(this.parameters);
             return builder;
         } catch (Exception exception) {
-            Throwables.throwIfUnchecked(exception);
-            return null;
+            throw new IllegalArgumentException("Cannot build component "+this.component,exception);
         }
     }
 

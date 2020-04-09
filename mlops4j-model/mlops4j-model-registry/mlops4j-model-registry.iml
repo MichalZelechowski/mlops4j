@@ -13,7 +13,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="mlops4j-metadata" />
     <orderEntry type="module" module-name="mlops4j-api" />
-    <orderEntry type="module" module-name="mlops4j-evaluation" />
     <orderEntry type="library" name="Maven: org.nd4j:nd4j-native-platform:1.0.0-beta6" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:openblas-platform:0.3.7-1.5.2" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:openblas:0.3.7-1.5.2" level="project" />

@@ -15,16 +15,11 @@
  *
  */
 
-package org.mlops4j.model.evaluation;
-
-import org.mlops4j.api.ModelEvaluation;
-import org.mlops4j.data.preparation.DataReference;
-import org.mlops4j.model.registry.ModelReference;
+package org.mlops4j.model.training;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
 
-public interface EvaluationStrategy {
-    ModelEvaluation evaluate(ModelReference model, DataReference dataReference);
+public class TrainingConfiguration {
 }

@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.mlops4j.api.Inference;
 import org.mlops4j.api.ModelEvaluation;
 import org.mlops4j.data.metadata.ComponentBuilder;
-import org.mlops4j.model.evaluation.DataReference;
+import org.mlops4j.data.preparation.DataReference;
 import org.mlops4j.model.evaluation.EvaluationStrategy;
 import org.mlops4j.model.evaluation.ModelEvaluator;
 import org.mlops4j.model.registry.*;
