@@ -23,7 +23,6 @@ import org.mlops4j.api.Inference;
 import org.mlops4j.data.preparation.DataReference;
 import org.mlops4j.model.registry.ModelReference;
 import org.mlops4j.model.registry.ModelRegistry;
-import org.nd4j.linalg.api.ndarray.INDArray;
 
 import java.util.Optional;
 
@@ -52,17 +51,7 @@ public class Training {
 
             @Override
             public Inference getInference() {
-                return new Inference() {
-                    @Override
-                    public INDArray output(INDArray input) {
-                        return null;
-                    }
-
-                    @Override
-                    public byte[] getModelBinary() {
-                        return new byte[0];
-                    }
-                };
+                return new MockInference();
             }
         };
     }
