@@ -2,7 +2,7 @@ package org.mlops4j.model.validation;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.mlops4j.model.registry.ModelReference;
+import org.mlops4j.model.registry.Model;
 
 import java.util.Optional;
 
@@ -10,7 +10,7 @@ import java.util.Optional;
 public class ModelValidator {
     private final ValidationStrategy strategy;
 
-    public ValidationResult validate(ModelReference reference) {
+    public ValidationResult validate(Model reference) {
         ValidationStatus status = this.strategy.validate(reference);
         String message = (status == ValidationStatus.ACCEPTED) ?
                 String.format("%s/%s meets baseline", reference.getName(), reference.getVersion()) :

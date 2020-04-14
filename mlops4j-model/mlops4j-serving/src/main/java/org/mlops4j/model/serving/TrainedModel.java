@@ -18,7 +18,7 @@ package org.mlops4j.model.serving;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.datavec.api.records.Record;
-import org.mlops4j.model.registry.ModelReference;
+import org.mlops4j.model.registry.Model;
 import org.mlops4j.model.registry.ModelRegistry;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
@@ -30,9 +30,9 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 @EqualsAndHashCode
 public class TrainedModel {
 
-    private final ModelReference reference;
+    private final Model reference;
 
-    private TrainedModel(ModelReference reference) {
+    private TrainedModel(Model reference) {
         this.reference = reference;
     }
 
@@ -79,7 +79,7 @@ public class TrainedModel {
             if (this.registry == null) {
                 throw new IllegalArgumentException("Model registry not set");
             }
-            ModelReference model = this.registry.getModel(this.name, this.version)
+            Model model = this.registry.getModel(this.name, this.version)
                     .orElseThrow(() -> new IllegalArgumentException(String.format("Cannot find model of [%s/%s]", this.name, this.version)));
             return new TrainedModel(model);
         }

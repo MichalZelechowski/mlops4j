@@ -14,19 +14,24 @@
  *  limitations under the License.
  *
  */
+package org.mlops4j.storage;
 
-package org.mlops4j.api;
+import org.apache.commons.lang3.SerializationUtils;
+import org.mlops4j.api.DataSerializer;
 
-import org.mlops4j.data.metadata.Metadata;
+import java.io.Serializable;
 
-import java.util.Collections;
 
-/**
- * @author Michał Żelechowski <MichalZelechowski@github.com>
- */
+public class JavaDataSerializer<TYPE extends Serializable> implements DataSerializer<TYPE> {
 
-public class ModelEvaluationMetadata extends Metadata<ModelEvaluation> {
-    public ModelEvaluationMetadata(String component) {
-        super(component, Collections.EMPTY_MAP);
+    @Override
+    public TYPE construct(byte[] bytes) {
+        return SerializationUtils.deserialize(bytes);
     }
+
+    @Override
+    public byte[] hydrolyze(TYPE object) {
+        return SerializationUtils.serialize(object);
+    }
+    
 }

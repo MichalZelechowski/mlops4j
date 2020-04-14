@@ -15,18 +15,12 @@
  *
  */
 
-package org.mlops4j.api;
-
-import org.mlops4j.data.metadata.Metadata;
-
-import java.util.Collections;
+package org.mlops4j.model.training;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
 
-public class ModelEvaluationMetadata extends Metadata<ModelEvaluation> {
-    public ModelEvaluationMetadata(String component) {
-        super(component, Collections.EMPTY_MAP);
-    }
+public interface Trainer<MODEL, DATA_SET> {
+    TrainingResult fit(MODEL modelImplementation, DATA_SET dataSet);
 }

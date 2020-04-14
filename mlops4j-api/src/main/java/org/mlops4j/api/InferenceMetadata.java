@@ -16,11 +16,11 @@
  */
 package org.mlops4j.api;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.mlops4j.data.metadata.Metadata;
 
+import java.io.Serializable;
 import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -29,10 +29,10 @@ import java.util.List;
 public class InferenceMetadata extends Metadata<Inference> {
 
     public InferenceMetadata(String component) {
-        super(component, Collections.EMPTY_LIST);
+        super(component, Collections.EMPTY_MAP);
     }
 
-    public InferenceMetadata(String component, List<Pair<String, Object>> parameters) {
+    public InferenceMetadata(String component, Map<String, Serializable> parameters) {
         super(component, parameters);
     }
 

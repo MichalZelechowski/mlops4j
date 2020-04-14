@@ -14,26 +14,36 @@
  *  limitations under the License.
  *
  */
-package org.mlops4j.api;
+package org.mlops4j.storage;
 
-import org.mlops4j.data.metadata.Metadata;
+import org.mlops4j.api.KeyValueStorage;
 
-import java.io.Serializable;
-import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-public class DataConverterMetadata extends Metadata<DataConverter> {
+public class InMemoryKeyValueStorage extends KeyValueStorage {
 
-    public DataConverterMetadata(String component) {
-        super(component, Collections.EMPTY_MAP);
+    private final Map<String, byte[]> container;
+
+    public InMemoryKeyValueStorage() {
+        this.container = new ConcurrentHashMap<>();
     }
 
-    public DataConverterMetadata(String component, Map<String, Serializable> parameters) {
-        super(component, parameters);
+    @Override
+    public Optional<byte[]> get(String... key) {
+        final String constructedKey = this.constructKey(key);
+        return Optional.ofNullable(container.get(constructedKey));
+    }
+
+    @Override
+    public void put(byte[] bytes, String... key) {
+        final String constructedKey = this.constructKey(key);
+        this.container.put(constructedKey, bytes);
     }
 
 }

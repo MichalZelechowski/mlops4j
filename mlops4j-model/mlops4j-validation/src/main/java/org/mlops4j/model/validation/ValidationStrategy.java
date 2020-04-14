@@ -1,9 +1,9 @@
 package org.mlops4j.model.validation;
 
-import org.mlops4j.model.registry.ModelReference;
+import org.mlops4j.model.registry.Model;
 
 public interface ValidationStrategy {
 
-    ValidationStatus validate(ModelReference reference);
+    ValidationStatus validate(Model reference);
 
 }

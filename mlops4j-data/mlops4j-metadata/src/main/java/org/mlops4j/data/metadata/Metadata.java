@@ -15,22 +15,20 @@
  */
 package org.mlops4j.data.metadata;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import java.io.Serializable;
-import java.util.List;
+import java.util.Collections;
+import java.util.Map;
 
 /**
- *
- * @author Michał Żelechowski <MichalZelechowski@github.com>
  * @param <TYPE>
+ * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
 public abstract class Metadata<TYPE> implements Serializable {
 
     protected String component;
-    protected List<Pair<String, Object>> parameters;
+    protected Map<String, Serializable> parameters;
 
-    protected Metadata(String component, List<Pair<String, Object>> parameters) {
+    protected Metadata(String component, Map<String, Serializable> parameters) {
         this.component = component;
         this.parameters = parameters;
     }
@@ -40,20 +38,30 @@ public abstract class Metadata<TYPE> implements Serializable {
 
     protected ComponentBuilder<TYPE> getBuilder() {
         try {
-            Class<? extends ComponentBuilder> builderClass = (Class<? extends ComponentBuilder>) this.getClass().forName(this.component + "$Builder");
-            if (!(ComponentBuilder.class.isAssignableFrom(builderClass))){
+            Class<? extends ComponentBuilder> builderClass = (Class<? extends ComponentBuilder>) this.getClass().forName(this.component);
+            if (!(ComponentBuilder.class.isAssignableFrom(builderClass))) {
                 throw new IllegalArgumentException(String.format("Component %s has no ComponentBuilder", this.component));
             }
 
             ComponentBuilder<TYPE> builder = builderClass.getConstructor().newInstance().fromParameters(this.parameters);
             return builder;
         } catch (Exception exception) {
-            throw new IllegalArgumentException("Cannot build component "+this.component,exception);
+            throw new IllegalArgumentException("Cannot build component " + this.component, exception);
         }
     }
 
     public TYPE construct() {
         ComponentBuilder<TYPE> builder = this.getBuilder();
         return builder.build();
+    }
+
+    public static class BareMetadata<TYPE> extends Metadata<TYPE> {
+        public BareMetadata(Class<? extends ComponentBuilder<TYPE>> component, Map<String, Serializable> parameters) {
+            super(component.getName(), parameters);
+        }
+
+        public BareMetadata(Class<? extends ComponentBuilder<TYPE>> component) {
+            super(component.getName(), Collections.EMPTY_MAP);
+        }
     }
 }

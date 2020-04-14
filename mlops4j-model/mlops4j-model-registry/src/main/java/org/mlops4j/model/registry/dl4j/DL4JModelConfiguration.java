@@ -15,18 +15,14 @@
  *
  */
 
-package org.mlops4j.api;
+package org.mlops4j.model.registry.dl4j;
 
-import org.mlops4j.data.metadata.Metadata;
-
-import java.util.Collections;
+import org.deeplearning4j.nn.api.NeuralNetwork;
+import org.mlops4j.model.registry.ModelConfiguration;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
 
-public class ModelEvaluationMetadata extends Metadata<ModelEvaluation> {
-    public ModelEvaluationMetadata(String component) {
-        super(component, Collections.EMPTY_MAP);
-    }
+public abstract class DL4JModelConfiguration<NN extends NeuralNetwork> implements ModelConfiguration<NN> {
 }

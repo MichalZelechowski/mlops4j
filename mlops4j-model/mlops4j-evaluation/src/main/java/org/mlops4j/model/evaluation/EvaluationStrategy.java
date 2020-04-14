@@ -18,13 +18,13 @@
 package org.mlops4j.model.evaluation;
 
 import org.mlops4j.api.ModelEvaluation;
-import org.mlops4j.data.preparation.DataReference;
-import org.mlops4j.model.registry.ModelReference;
+import org.mlops4j.data.preparation.DataSet;
+import org.mlops4j.model.registry.Model;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
 
 public interface EvaluationStrategy {
-    ModelEvaluation evaluate(ModelReference model, DataReference dataReference);
+    ModelEvaluation evaluate(Model model, DataSet dataReference);
 }

@@ -15,18 +15,14 @@
  *
  */
 
-package org.mlops4j.api;
+package org.mlops4j.model.training.dl4j;
 
-import org.mlops4j.data.metadata.Metadata;
-
-import java.util.Collections;
+import org.mlops4j.model.training.TrainingConfiguration;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
 
-public class ModelEvaluationMetadata extends Metadata<ModelEvaluation> {
-    public ModelEvaluationMetadata(String component) {
-        super(component, Collections.EMPTY_MAP);
-    }
+public abstract class DL4JTrainingConfiguration<TRAINER extends DL4JTrainer> extends TrainingConfiguration<TRAINER> {
+
 }

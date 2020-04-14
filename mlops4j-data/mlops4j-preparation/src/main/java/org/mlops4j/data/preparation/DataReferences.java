@@ -30,20 +30,20 @@ import java.util.Optional;
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DataReferences {
-    private final LinkedHashMap<String, DataReference> references;
+    private final LinkedHashMap<String, DataSet> references;
 
-    public Optional<DataReference> getReference(String name) {
+    public Optional<DataSet> getReference(String name) {
         return Optional.ofNullable(this.references.get(name));
     }
 
-    public List<DataReference> getReferences() {
+    public List<DataSet> getReferences() {
         return Lists.newLinkedList(this.references.values());
     }
 
     public static class Builder {
-        private LinkedHashMap<String, DataReference> references = new LinkedHashMap<>();
+        private LinkedHashMap<String, DataSet> references = new LinkedHashMap<>();
 
-        public Builder reference(String name, DataReference reference) {
+        public Builder reference(String name, DataSet reference) {
             this.references.put(name, reference);
             return this;
         }

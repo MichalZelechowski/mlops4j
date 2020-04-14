@@ -15,9 +15,8 @@
  */
 package org.mlops4j.data.metadata;
 
-import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.List;
+import java.io.Serializable;
+import java.util.Map;
 
 /**
  *
@@ -28,5 +27,5 @@ public interface ComponentBuilder<TYPE> {
     
     TYPE build();
     
-    ComponentBuilder<TYPE> fromParameters(List<Pair<String, Object>> parameters);
+    ComponentBuilder<TYPE> fromParameters(Map<String, Serializable> parameters);
 }

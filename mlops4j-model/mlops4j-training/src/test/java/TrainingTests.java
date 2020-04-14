@@ -15,13 +15,26 @@
  *
  */
 
+import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
+import org.deeplearning4j.nn.conf.layers.DenseLayer;
+import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.junit.jupiter.api.Test;
-import org.mlops4j.data.preparation.DataReference;
-import org.mlops4j.model.registry.InMemoryKeyValueStorage;
-import org.mlops4j.model.registry.JavaDataSerializer;
+import org.mlops4j.data.preparation.DataSet;
+import org.mlops4j.model.registry.Model;
+import org.mlops4j.model.registry.ModelConfiguration;
 import org.mlops4j.model.registry.ModelRegistry;
+import org.mlops4j.model.registry.dl4j.DL4JMultiLayerNetworkConfiguration;
 import org.mlops4j.model.training.Training;
 import org.mlops4j.model.training.TrainingConfiguration;
+import org.mlops4j.model.training.dl4j.DL4JDataSetIteratorProvider;
+import org.mlops4j.model.training.dl4j.DL4JEpochBasedTrainingConfiguration;
+import org.mlops4j.storage.InMemoryKeyValueStorage;
+import org.mlops4j.storage.JavaDataSerializer;
+import org.nd4j.linalg.activations.Activation;
+import org.nd4j.linalg.factory.Nd4j;
+import org.nd4j.linalg.lossfunctions.LossFunctions;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -32,27 +45,61 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class TrainingTests {
 
     @Test
-    public void trainModel() {
+    public void firstTrainingOfModel() {
         ModelRegistry registry = new ModelRegistry.Builder()
                 .storage(new InMemoryKeyValueStorage())
                 .serializer(new JavaDataSerializer())
                 .build();
 
-        TrainingConfiguration trainingConfiguration = new TrainingConfiguration();
-        DataReference dataReference = new DataReference() {
-            @Override
-            public String getName() {
-                return "some name";
-            }
-        };
+        TrainingConfiguration trainingConfiguration = new DL4JEpochBasedTrainingConfiguration.Builder().epochs(1).build();
+        ModelConfiguration modelConfiguration = new DL4JMultiLayerNetworkConfiguration.Builder().configuration(
+                new NeuralNetConfiguration.Builder()
+                        .list()
+                        .layer(0, new DenseLayer.Builder().nIn(2).nOut(3).build())
+                        .layer(1, new OutputLayer.Builder(
+                                LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
+                                .activation(Activation.SOFTMAX)
+                                .nIn(3).nOut(2).build())
+        ).build();
+
+        DataSet dataReference = new DL4JDataSetIteratorProvider("test_set", "20191012120000",
+                new org.nd4j.linalg.dataset.DataSet(Nd4j.ones(1, 2), Nd4j.ones(1, 2)));
+
         Training training = new Training.Builder()
-                .configuration(trainingConfiguration)
-                .dataReferences(dataReference)
-                .registry(registry)
+                .trainingConfiguration(trainingConfiguration)
+                .modelConfiguration(modelConfiguration)
+                .trainingDataSet(dataReference)
+                .modelRegistry(registry)
                 .build();
 
-        training.perform("test_model", "test_version");
+        training.run("test_model", "test_version");
 
-        assertThat(registry.getModel("test_model", "test_version")).isPresent();
+        Optional<Model> model = registry.getModel("test_model", "test_version", "test_set", "20191012120000", "1");
+        assertThat(model).isPresent();
     }
+
+//    @Test
+//    public void trainModel() {
+//        ModelRegistry registry = new ModelRegistry.Builder()
+//                .storage(new InMemoryKeyValueStorage())
+//                .serializer(new JavaDataSerializer())
+//                .build();
+//
+//        TrainingConfiguration trainingConfiguration = new TrainingConfiguration();
+//        DataSet dataReference = new DataSet() {
+//            @Override
+//            public String getName() {
+//                return "some name";
+//            }
+//        };
+//        Training training = new Training.Builder()
+//                .trainingConfiguration(trainingConfiguration)
+//                .trainingDataSet(dataReference)
+//                .modelRegistry(registry)
+//                .build();
+//
+//        training.run("test_model", "test_version");
+//
+//        assertThat(registry.getModel("test_model", "test_version")).isPresent();
+//    }
 }

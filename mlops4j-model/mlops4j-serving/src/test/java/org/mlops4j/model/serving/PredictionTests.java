@@ -25,6 +25,8 @@ import org.junit.jupiter.api.Test;
 import org.mlops4j.api.Inference;
 import org.mlops4j.data.metadata.ComponentBuilder;
 import org.mlops4j.model.registry.*;
+import org.mlops4j.storage.InMemoryKeyValueStorage;
+import org.mlops4j.storage.JavaDataSerializer;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.ops.transforms.Transforms;
 
@@ -40,7 +42,7 @@ public class PredictionTests {
 
     @Test
     public void createPredictionFromServingWithModel() {
-        ModelReference reference = new ModelReference.Builder()
+        Model reference = new Model.Builder()
                 .name("testModel")
                 .version("1.0")
                 .converter(new INDArrayDataConverter())
@@ -106,7 +108,7 @@ public class PredictionTests {
             }
 
             @Override
-            public ComponentBuilder fromParameters(List parameters) {
+            public ComponentBuilder fromParameters(Map<String, Object> parameters) {
                 return this;
             }
 

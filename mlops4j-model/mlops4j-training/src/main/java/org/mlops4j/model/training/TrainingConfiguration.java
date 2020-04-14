@@ -21,5 +21,7 @@ package org.mlops4j.model.training;
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
 
-public class TrainingConfiguration {
+public abstract class TrainingConfiguration<TRAINER extends Trainer> {
+    public abstract TRAINER getTrainer();
+    public abstract Integer getCyclesNumber();
 }

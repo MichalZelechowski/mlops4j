@@ -19,8 +19,8 @@ package org.mlops4j.model.evaluation;
 
 import lombok.AllArgsConstructor;
 import org.mlops4j.api.ModelEvaluation;
-import org.mlops4j.data.preparation.DataReference;
-import org.mlops4j.model.registry.ModelReference;
+import org.mlops4j.data.preparation.DataSet;
+import org.mlops4j.model.registry.Model;
 import org.mlops4j.model.registry.ModelRegistry;
 
 import java.util.Optional;
@@ -33,7 +33,7 @@ public class ModelEvaluator {
     private final EvaluationStrategy strategy;
     private final ModelRegistry registry;
 
-    public ModelEvaluation evaluate(ModelReference model, DataReference dataReference) {
+    public ModelEvaluation evaluate(Model model, DataSet dataReference) {
         ModelEvaluation evaluation = this.strategy.evaluate(model, dataReference);
         model.addEvaluation(evaluation);
         this.registry.putModel(model);

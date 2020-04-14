@@ -14,13 +14,16 @@
  *  limitations under the License.
  *
  */
-
-package org.mlops4j.data.preparation;
+package org.mlops4j.api;
 
 /**
+ *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
+ * @param <TYPE>
  */
+public interface DataSerializer<TYPE> {
 
-public interface DataReference {
-    String getName();
+    TYPE construct(byte[] bytes);
+
+    byte[] hydrolyze(TYPE object);
 }

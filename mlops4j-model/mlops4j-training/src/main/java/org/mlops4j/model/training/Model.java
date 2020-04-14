@@ -18,14 +18,11 @@
 package org.mlops4j.model.training;
 
 import org.mlops4j.api.Inference;
-import org.mlops4j.data.preparation.DataReference;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
 
 public abstract class Model {
-    public abstract void fit(DataReference dataReference);
-
     public abstract Inference getInference();
 }

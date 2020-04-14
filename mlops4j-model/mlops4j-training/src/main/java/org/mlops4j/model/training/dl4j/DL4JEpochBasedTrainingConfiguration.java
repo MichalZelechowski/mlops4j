@@ -15,11 +15,11 @@
  *
  */
 
-package org.mlops4j.model.training;
+package org.mlops4j.model.training.dl4j;
 
-import org.mlops4j.api.Inference;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import org.mlops4j.data.metadata.ComponentBuilder;
-import org.nd4j.linalg.api.ndarray.INDArray;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -27,32 +27,38 @@ import java.util.Map;
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class DL4JEpochBasedTrainingConfiguration extends DL4JTrainingConfiguration<DL4JEpochBasedTrainer> {
 
-public class MockInference implements Inference {
+    private final Integer epochs;
+
     @Override
-    public INDArray output(INDArray input) {
-        return null;
+    public DL4JEpochBasedTrainer getTrainer() {
+        return new DL4JEpochBasedTrainer(this.epochs);
     }
 
     @Override
-    public byte[] getModelBinary() {
-        return new byte[0];
+    public Integer getCyclesNumber() {
+        return this.epochs;
     }
 
-    public static class Builder implements Inference.Builder<MockInference> {
+    public static class Builder implements ComponentBuilder<DL4JEpochBasedTrainingConfiguration> {
+
+        private Integer epochs = 1;
 
         @Override
-        public MockInference build() {
-            return new MockInference();
+        public DL4JEpochBasedTrainingConfiguration build() {
+            return new DL4JEpochBasedTrainingConfiguration(epochs);
         }
 
-        @Override
-        public ComponentBuilder<MockInference> fromParameters(Map<String, Serializable> parameters) {
+        public Builder epochs(int epochs) {
+            this.epochs = epochs;
             return this;
         }
 
         @Override
-        public Inference.Builder<MockInference> model(byte[] bytes) {
+        public Builder fromParameters(Map<String, Serializable> parameters) {
+            this.epochs((Integer) parameters.getOrDefault("epochs", this.epochs));
             return this;
         }
     }

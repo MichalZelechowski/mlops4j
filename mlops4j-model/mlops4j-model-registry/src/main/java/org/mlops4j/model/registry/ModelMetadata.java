@@ -25,14 +25,14 @@ import org.mlops4j.data.metadata.Metadata;
  *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-public class ModelReferenceMetadata extends Metadata<ModelReference> {
+public class ModelMetadata extends Metadata<Model> {
 
     private final String name;
     private final String version;
     private final DataConverterMetadata dataConverter;
     private final InferenceMetadata inference;
 
-    public ModelReferenceMetadata(String name, String version, DataConverterMetadata dataConverter, InferenceMetadata inference) {
+    public ModelMetadata(String name, String version, DataConverterMetadata dataConverter, InferenceMetadata inference) {
         this.name = name;
         this.version = version;
         this.dataConverter = dataConverter;

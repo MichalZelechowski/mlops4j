@@ -19,9 +19,9 @@ package org.mlops4j.model.training;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.mlops4j.api.Inference;
-import org.mlops4j.data.preparation.DataReference;
-import org.mlops4j.model.registry.ModelReference;
+import org.mlops4j.data.preparation.DataSet;
+import org.mlops4j.model.registry.Model;
+import org.mlops4j.model.registry.ModelConfiguration;
 import org.mlops4j.model.registry.ModelRegistry;
 
 import java.util.Optional;
@@ -31,35 +31,29 @@ import java.util.Optional;
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Training {
-    private final TrainingConfiguration configuration;
-    private final DataReference dataReference;
+    private final TrainingConfiguration trainingConfiguration;
+    private final DataSet dataReference;
     private final ModelRegistry registry;
+    private final ModelConfiguration modelConfiguration;
 
-    public void perform(String name, String version) {
-        Model model = this.createModel();
-        model.fit(dataReference);
+    public TrainingResult run(String name, String version) {
+        Trainer trainer = this.trainingConfiguration.getTrainer();
+        Object modelImplementation = this.modelConfiguration.getModelImplementation();
+        TrainingResult result = trainer.fit(modelImplementation, this.dataReference);
 
-        this.registerModel(name, version, model);
+        this.registerModel(name, version, this.dataReference.getName(), this.dataReference.getPartition(),
+                result.getCyclesNumber(), result.getModel());
+        return result;
     }
 
-    private Model createModel() {
-        return new Model(){
-            @Override
-            public void fit(DataReference dataReference) {
-
-            }
-
-            @Override
-            public Inference getInference() {
-                return new MockInference();
-            }
-        };
-    }
-
-    private void registerModel(String name, String version, Model model) {
-        ModelReference reference = new ModelReference.Builder()
+    private void registerModel(String name, String version, String dataSetName, String partition,
+                               Integer cyclesNumber, org.mlops4j.model.training.Model model) {
+        Model reference = new Model.Builder()
                 .name(name)
                 .version(version)
+                .dataSet(dataSetName)
+                .partition(partition)
+                .cycles(cyclesNumber.toString())
                 .inference(model.getInference())
                 .build();
 
@@ -67,30 +61,37 @@ public class Training {
     }
 
     public static class Builder {
-        private TrainingConfiguration configuration;
-        private DataReference dataReference;
+        private TrainingConfiguration trainingConfiguration;
+        private DataSet dataReference;
         private ModelRegistry registry;
+        private ModelConfiguration modelConfiguration;
 
-        public Builder configuration(TrainingConfiguration trainingConfiguration) {
-            this.configuration = trainingConfiguration;
+        public Builder trainingConfiguration(TrainingConfiguration trainingConfiguration) {
+            this.trainingConfiguration = trainingConfiguration;
             return this;
         }
 
-        public Builder dataReferences(DataReference dataReference) {
+        public Builder trainingDataSet(DataSet dataReference) {
             this.dataReference = dataReference;
             return this;
         }
 
-        public Builder registry(ModelRegistry registry) {
+        public Builder modelRegistry(ModelRegistry registry) {
             this.registry = registry;
             return this;
         }
 
         public Training build() {
-            this.configuration = Optional.ofNullable(this.configuration).orElseThrow(() -> new NullPointerException("Training configuration not set"));
+            this.trainingConfiguration = Optional.ofNullable(this.trainingConfiguration).orElseThrow(() -> new NullPointerException("Training configuration not set"));
             this.dataReference = Optional.ofNullable(this.dataReference).orElseThrow(() -> new NullPointerException("Data reference not set"));
             this.registry = Optional.ofNullable(this.registry).orElseThrow(() -> new NullPointerException("Model registry not set"));
-            return new Training(configuration, dataReference, registry);
+            this.modelConfiguration = Optional.ofNullable(this.modelConfiguration).orElseThrow(() -> new NullPointerException("Model configuration not set"));
+            return new Training(trainingConfiguration, dataReference, registry, modelConfiguration);
+        }
+
+        public Builder modelConfiguration(ModelConfiguration modelConfiguration) {
+            this.modelConfiguration = modelConfiguration;
+            return this;
         }
     }
 }

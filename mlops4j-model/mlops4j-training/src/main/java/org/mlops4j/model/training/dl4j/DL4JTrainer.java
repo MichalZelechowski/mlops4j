@@ -15,18 +15,14 @@
  *
  */
 
-package org.mlops4j.api;
+package org.mlops4j.model.training.dl4j;
 
-import org.mlops4j.data.metadata.Metadata;
-
-import java.util.Collections;
+import org.deeplearning4j.nn.api.NeuralNetwork;
+import org.mlops4j.model.training.Trainer;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
 
-public class ModelEvaluationMetadata extends Metadata<ModelEvaluation> {
-    public ModelEvaluationMetadata(String component) {
-        super(component, Collections.EMPTY_MAP);
-    }
+public interface DL4JTrainer<NN extends NeuralNetwork> extends Trainer<NN, DL4JDataSetProvider> {
 }

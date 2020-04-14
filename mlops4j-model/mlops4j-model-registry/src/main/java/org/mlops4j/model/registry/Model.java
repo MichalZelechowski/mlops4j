@@ -34,7 +34,7 @@ import java.util.stream.Stream;
  */
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class ModelReference implements HasMetadata<ModelReferenceMetadata> {
+public class Model implements HasMetadata<ModelMetadata> {
 
     private final String name;
     private final String version;
@@ -43,8 +43,8 @@ public class ModelReference implements HasMetadata<ModelReferenceMetadata> {
     private final List<ModelEvaluation> evaluations;
 
     @Override
-    public ModelReferenceMetadata getMetadata() {
-        return new ModelReferenceMetadata(this.name, this.version, this.converter.getMetadata(), this.inference.getMetadata());
+    public ModelMetadata getMetadata() {
+        return new ModelMetadata(this.name, this.version, this.converter.getMetadata(), this.inference.getMetadata());
     }
 
     public Stream<ModelEvaluation> getEvaluations() {
@@ -62,6 +62,9 @@ public class ModelReference implements HasMetadata<ModelReferenceMetadata> {
         private String version;
         private String name;
         private List<ModelEvaluation> evaluations = Lists.newLinkedList();
+        private String dataSet;
+        private String partition;
+        private String cycles;
 
         public Builder converter(DataConverter converter) {
             this.converter = converter;
@@ -88,14 +91,28 @@ public class ModelReference implements HasMetadata<ModelReferenceMetadata> {
             return this;
         }
 
-        public ModelReference build() {
+        public Model build() {
             this.name = Optional.ofNullable(this.name).orElseThrow(() -> new IllegalArgumentException("Name not set"));
             this.version = Optional.ofNullable(this.version).orElseThrow(() -> new IllegalArgumentException("Version not set"));
             this.converter = Optional.ofNullable(this.converter).orElseGet(INDArrayDataConverter::new);
             this.inference = Optional.ofNullable(this.inference).orElseThrow(() -> new IllegalArgumentException("Inference not set"));
-            return new ModelReference(name, version, converter, inference, evaluations);
+            return new Model(name, version, converter, inference, evaluations);
         }
 
+        public Builder dataSet(String dataSet) {
+            this.dataSet = dataSet;
+            return this;
+        }
+
+        public Builder partition(String partition) {
+            this.partition = partition;
+            return this;
+        }
+
+        public Builder cycles(String cycles) {
+            this.cycles = cycles;
+            return this;
+        }
     }
 
 }

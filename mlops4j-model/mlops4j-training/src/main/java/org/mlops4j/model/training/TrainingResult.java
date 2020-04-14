@@ -15,18 +15,17 @@
  *
  */
 
-package org.mlops4j.api;
+package org.mlops4j.model.training;
 
-import org.mlops4j.data.metadata.Metadata;
-
-import java.util.Collections;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-
-public class ModelEvaluationMetadata extends Metadata<ModelEvaluation> {
-    public ModelEvaluationMetadata(String component) {
-        super(component, Collections.EMPTY_MAP);
-    }
+@Getter
+@AllArgsConstructor
+public class TrainingResult {
+    private final Model model;
+    private final Integer cyclesNumber;
 }

@@ -15,18 +15,12 @@
  *
  */
 
-package org.mlops4j.api;
-
-import org.mlops4j.data.metadata.Metadata;
-
-import java.util.Collections;
+package org.mlops4j.model.registry;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
 
-public class ModelEvaluationMetadata extends Metadata<ModelEvaluation> {
-    public ModelEvaluationMetadata(String component) {
-        super(component, Collections.EMPTY_MAP);
-    }
+public interface ModelConfiguration<IMPLEMENTATION> {
+    IMPLEMENTATION getModelImplementation();
 }

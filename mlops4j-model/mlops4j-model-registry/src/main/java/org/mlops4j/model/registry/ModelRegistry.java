@@ -17,11 +17,12 @@ package org.mlops4j.model.registry;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import org.mlops4j.api.DataSerializer;
+import org.mlops4j.api.KeyValueStorage;
 
 import java.util.Optional;
 
 /**
- *
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -35,30 +36,33 @@ public class ModelRegistry {
     private final KeyValueStorage storage;
     private final DataSerializer serializer;
 
-    public Optional<ModelReference> getModel(String name, String version) {
-        Optional<byte[]> metadata = storage.get(MODEL, TRAINED, name, version, METADATA);
+    public Optional<Model> getModel(String name, String version, String dataSet, String partition, String iteration) {
+        Optional<byte[]> metadata = storage.get(MODEL, TRAINED, name, version, dataSet, partition, iteration, METADATA);
         if (metadata.isEmpty()) {
             return Optional.empty();
         }
 
-        Optional<byte[]> binary = storage.get(MODEL, TRAINED, name, version, BINARY);
+        Optional<byte[]> binary = storage.get(MODEL, TRAINED, name, version, dataSet, partition, iteration, BINARY);
         if (binary.isEmpty()) {
             return Optional.empty();
         }
 
-        ModelReferenceMetadata modelMetadata = (ModelReferenceMetadata) serializer.construct(metadata.get());
-        return Optional.of(new ModelReference.Builder()
+        ModelMetadata modelMetadata = (ModelMetadata) serializer.construct(metadata.get());
+        return Optional.of(new Model.Builder()
                 .name(name)
                 .version(version)
+                .dataSet(dataSet)
+                .partition(partition)
+                .cycles(iteration)
                 .converter(modelMetadata.getConverter())
                 .inference(modelMetadata.getInference(binary.get()))
                 .build());
     }
 
-    public void putModel(ModelReference reference) {
-        byte[] metadata = serializer.hydrolize(reference.getMetadata());
+    public void putModel(Model reference) {
+        byte[] metadata = serializer.hydrolyze(reference.getMetadata());
         storage.put(metadata, MODEL, TRAINED, reference.getName(), reference.getVersion(), METADATA);
-        
+
         byte[] binary = reference.getInference().getModelBinary();
         storage.put(binary, MODEL, TRAINED, reference.getName(), reference.getVersion(), BINARY);
     }
@@ -72,8 +76,8 @@ public class ModelRegistry {
             this.storage = storage;
             return this;
         }
-        
-        
+
+
         public Builder serializer(DataSerializer<?> serializer) {
             this.serializer = serializer;
             return this;
