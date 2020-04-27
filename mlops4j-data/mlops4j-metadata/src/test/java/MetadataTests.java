@@ -22,6 +22,7 @@ import org.mlops4j.data.metadata.HasMetadata;
 import org.mlops4j.data.metadata.Metadata;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -71,7 +72,11 @@ public class MetadataTests {
 
         @Override
         public Metadata.BareMetadata<MetadataOwner> getMetadata() {
-            return new Metadata.BareMetadata<>(OwnerBuilder.class, ImmutableMap.of("param", this.param));
+            if (this.param == null) {
+                return new Metadata.BareMetadata<>(OwnerBuilder.class, Collections.emptyMap());
+            } else {
+                return new Metadata.BareMetadata<>(OwnerBuilder.class, ImmutableMap.of("param", this.param));
+            }
         }
     }
 

@@ -38,6 +38,9 @@ public class Model implements HasMetadata<ModelMetadata> {
 
     private final String name;
     private final String version;
+    private final String dataSet;
+    private final String partition;
+    private final String cycles;
     private final DataConverter converter;
     private final Inference inference;
     private final List<ModelEvaluation> evaluations;
@@ -96,7 +99,10 @@ public class Model implements HasMetadata<ModelMetadata> {
             this.version = Optional.ofNullable(this.version).orElseThrow(() -> new IllegalArgumentException("Version not set"));
             this.converter = Optional.ofNullable(this.converter).orElseGet(INDArrayDataConverter::new);
             this.inference = Optional.ofNullable(this.inference).orElseThrow(() -> new IllegalArgumentException("Inference not set"));
-            return new Model(name, version, converter, inference, evaluations);
+            this.dataSet = Optional.ofNullable(this.dataSet).orElseThrow(() -> new IllegalArgumentException("No dataset defined"));
+            this.partition = Optional.ofNullable(this.partition).orElseThrow(() -> new IllegalArgumentException("No partition defined"));
+            this.cycles = Optional.ofNullable(this.cycles).orElseThrow(() -> new IllegalArgumentException("No cycles defined"));
+            return new Model(name, version, dataSet, partition, cycles, converter, inference, evaluations);
         }
 
         public Builder dataSet(String dataSet) {

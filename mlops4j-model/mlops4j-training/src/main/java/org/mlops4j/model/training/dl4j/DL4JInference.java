@@ -22,6 +22,7 @@ import org.deeplearning4j.nn.api.Model;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.util.ModelSerializer;
 import org.mlops4j.api.Inference;
+import org.mlops4j.api.InferenceMetadata;
 import org.mlops4j.data.metadata.ComponentBuilder;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
@@ -60,6 +61,12 @@ public class DL4JInference implements Inference {
         }
     }
 
+    @Override
+    public InferenceMetadata getMetadata() {
+        return new InferenceMetadata(this.getClass().getName()+"$Builder");
+    }
+
+
     public static class Builder implements ComponentBuilder<DL4JInference> {
 
         private MultiLayerNetwork multiLayerNetwork;
@@ -73,7 +80,7 @@ public class DL4JInference implements Inference {
         public ComponentBuilder<DL4JInference> fromParameters(Map<String, Serializable> parameters) {
             byte[] binary = (byte[]) parameters.get("model");
             String type = (String) parameters.get("type");
-            if (type.equals("MulitLayer")) {
+            if ("MulitLayer".equals(type)) {
                 ByteArrayInputStream bin = new ByteArrayInputStream(binary);
                 BufferedInputStream in = new BufferedInputStream(bin);
                 try {

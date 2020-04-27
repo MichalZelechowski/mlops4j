@@ -40,7 +40,7 @@ public abstract class Metadata<TYPE> implements Serializable {
         try {
             Class<? extends ComponentBuilder> builderClass = (Class<? extends ComponentBuilder>) this.getClass().forName(this.component);
             if (!(ComponentBuilder.class.isAssignableFrom(builderClass))) {
-                throw new IllegalArgumentException(String.format("Component %s has no ComponentBuilder", this.component));
+                throw new IllegalArgumentException(String.format("No builder %s found", this.component));
             }
 
             ComponentBuilder<TYPE> builder = builderClass.getConstructor().newInstance().fromParameters(this.parameters);

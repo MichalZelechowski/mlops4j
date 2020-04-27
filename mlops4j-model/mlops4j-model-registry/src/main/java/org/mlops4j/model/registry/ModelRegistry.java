@@ -61,10 +61,12 @@ public class ModelRegistry {
 
     public void putModel(Model reference) {
         byte[] metadata = serializer.hydrolyze(reference.getMetadata());
-        storage.put(metadata, MODEL, TRAINED, reference.getName(), reference.getVersion(), METADATA);
+        storage.put(metadata, MODEL, TRAINED, reference.getName(), reference.getVersion(),
+                reference.getDataSet(), reference.getPartition(), reference.getCycles(), METADATA);
 
         byte[] binary = reference.getInference().getModelBinary();
-        storage.put(binary, MODEL, TRAINED, reference.getName(), reference.getVersion(), BINARY);
+        storage.put(binary, MODEL, TRAINED, reference.getName(), reference.getVersion(),
+                reference.getDataSet(), reference.getPartition(), reference.getCycles(), BINARY);
     }
 
     public static class Builder {
@@ -76,7 +78,6 @@ public class ModelRegistry {
             this.storage = storage;
             return this;
         }
-
 
         public Builder serializer(DataSerializer<?> serializer) {
             this.serializer = serializer;

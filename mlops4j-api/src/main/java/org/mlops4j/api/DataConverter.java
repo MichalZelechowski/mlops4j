@@ -32,6 +32,6 @@ public interface DataConverter extends HasMetadata<DataConverterMetadata> {
 
     @Override
     default DataConverterMetadata getMetadata() {
-        return new DataConverterMetadata(this.getClass().getName());
+        return new DataConverterMetadata(this.getClass().getName()+"$Builder");
     }
 }

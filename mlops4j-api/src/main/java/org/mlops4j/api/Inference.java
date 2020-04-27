@@ -38,7 +38,7 @@ public interface Inference extends HasMetadata<InferenceMetadata> {
 
     @Override
     default InferenceMetadata getMetadata() {
-        return new InferenceMetadata(this.getClass().getName());
+        return new InferenceMetadata(this.getClass().getName()+"$Builder");
     }
 
 }
