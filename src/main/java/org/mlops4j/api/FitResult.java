@@ -17,26 +17,25 @@
 
 package org.mlops4j.api;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-public class FitResult {
-    private final ResultStatus status;
+public class FitResult extends Result {
     private final Integer iterationsDone;
-    private final Exception exception;
-    private final String message;
+
+    public FitResult(ResultStatus status, String message, Exception exception, Integer iterationsDone) {
+        super(status, message, exception);
+        this.iterationsDone = iterationsDone;
+    }
 
     public static FitResult success(Integer iterationsDone) {
-        return new FitResult(ResultStatus.SUCCESS, iterationsDone, null, null);
+        return new FitResult(ResultStatus.SUCCESS, null, null, iterationsDone);
     }
 
     public static FitResult failure(Integer iterationsDone, Exception exception, String message) {
-        return new FitResult(ResultStatus.FAILURE, iterationsDone, exception, message);
+        return new FitResult(ResultStatus.FAILURE, message, exception, iterationsDone);
     }
 }

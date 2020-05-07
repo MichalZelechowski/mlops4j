@@ -23,7 +23,7 @@ import java.util.Optional;
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
 
-public interface Evaluation extends Comparable<Evaluation> {
+public interface Evaluation extends Comparable<Evaluation>, Durable<Evaluation> {
 
     Metric[] getMetrics();
 

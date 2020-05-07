@@ -239,6 +239,9 @@ public class Metadata<T extends Durable<T>> implements Storable {
                     case INTEGER:
                         return new IntegerEntry((Integer) value);
                     case FLOAT:
+                        if (value instanceof Integer) {
+                            return new FloatEntry(((Integer)value).floatValue());
+                        }
                         return new FloatEntry((Float) value);
                     case DOUBLE:
                         return new DoubleEntry((Double) value);
@@ -431,6 +434,17 @@ public class Metadata<T extends Durable<T>> implements Storable {
             List<DurabilityEntry<?, ?>> result = Lists.newLinkedList();
             for (Object item : collection) {
                 result.add(DurabilityEntry.fromReal(item));
+            }
+            this.value = result.toArray(DurabilityEntry[]::new);
+        }
+
+        protected ArrayEntry(JSONArray collection) throws DurabilityException {
+            super(null);
+            List<DurabilityEntry<?, ?>> result = Lists.newLinkedList();
+            for (Object item : collection) {
+                DurabilityType type = ((JSONObject) item).getEnum(DurabilityType.class, "type");
+                Object value = ((JSONObject) item).get("value");
+                result.add(DurabilityEntry.fromJSON(type, value));
             }
             this.value = result.toArray(DurabilityEntry[]::new);
         }

@@ -26,14 +26,17 @@ import lombok.Getter;
 public class EvaluationResult extends Result {
     private final Iterable<? extends Evaluation> evaluations;
 
-    public EvaluationResult(ResultStatus status, String message, Iterable<Evaluation> evaluations) {
-        super(status, message);
+    private EvaluationResult(ResultStatus status, String message, Iterable<Evaluation> evaluations, Exception exception) {
+        super(status, message, exception);
         this.evaluations = evaluations;
     }
 
-    public EvaluationResult(Iterable<Evaluation> evaluations) {
-        super();
-        this.evaluations = evaluations;
+    public static EvaluationResult success(Iterable<Evaluation> evaluations) {
+        return new EvaluationResult(ResultStatus.SUCCESS, null, evaluations, null);
+    }
+
+    public static EvaluationResult failure(Iterable<Evaluation> evaluations, Exception exception, String message) {
+        return new EvaluationResult(ResultStatus.FAILURE, message, evaluations, exception);
     }
 
 }

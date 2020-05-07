@@ -68,13 +68,13 @@ public class ModelTests {
 
         assertThat(trainFuture).isDone();
         FitResult fitResult = trainFuture.get();
-        assertThat(fitResult.getStatus()).describedAs(fitResult.getMessage() + fitResult.getException()).isEqualTo(ResultStatus.SUCCESS);
+        assertThat(fitResult.getStatus()).describedAs(fitResult.getMessage().toString() + fitResult.getException().toString()).isEqualTo(ResultStatus.SUCCESS);
 
         DataSet evalSet = new TestDataSet.Builder().build();
         Future<EvaluationResult> evaluationFuture = model.evaluate(evalSet);
         assertThat(evaluationFuture).isDone();
         EvaluationResult evaluationResult = evaluationFuture.get();
-        assertThat(evaluationResult.getStatus()).isEqualTo(ResultStatus.SUCCESS);
+        assertThat(evaluationResult.getStatus()).describedAs(evaluationResult.getMessage().toString() + evaluationResult.getException().toString()).isEqualTo(ResultStatus.SUCCESS);
 
         Model storedModel = registry.get(model.getId()).orElseThrow(() -> new AssertionError("Cannot find model"));
 
@@ -88,10 +88,11 @@ public class ModelTests {
         Output<Float> output = outputFuture.get();
         assertThat(output.getValue()).isEqualTo(4.0f + (float) Math.pow(0.5f, 10), Offset.<Float>offset(0.001f));
 
-        assertThat(model.getEvaluations()).hasSize(1);
+        storedModel = registry.get(model.getId()).orElseThrow(() -> new AssertionError("Cannot find model"));
+        assertThat(storedModel.getEvaluations()).hasSize(1);
         Evaluation testEvaluation = new TestEvaluation(9.0f);
-        assertThat(model.getEvaluations().findFirst()).isPresent();
-        assertThat(model.getEvaluations().findFirst().get()).isEqualTo(testEvaluation);
+        assertThat(storedModel.getEvaluations().findFirst()).isPresent();
+        assertThat(storedModel.getEvaluations().findFirst().get()).isEqualTo(testEvaluation);
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -150,7 +151,7 @@ public class ModelTests {
             ThirdPartyDataSetRepresentation dataSet = dataSetRepresentation.get();
 
             TestEvaluation testEvaluation = new TestEvaluation(thirdPartyEvaluation.evaluate(dataSet));
-            EvaluationResult result = new EvaluationResult(Collections.singletonList(testEvaluation));
+            EvaluationResult result = EvaluationResult.success(Collections.singletonList(testEvaluation));
 
             return CompletableFuture.completedFuture(result);
         }
@@ -292,7 +293,32 @@ public class ModelTests {
 
         @Override
         public boolean equals(Object evaluation) {
-            return this.value == ((TestEvaluation)evaluation).value;
+            return this.value == ((TestEvaluation) evaluation).value;
+        }
+
+        @Override
+        public Metadata<Evaluation> getMetadata() throws DurabilityException {
+            return new Metadata<>(this).withParameter("value", value);
+        }
+
+        @Override
+        public ComponentBuilder<Evaluation> getBuilder() {
+            return new Builder();
+        }
+
+        public static final class Builder implements ComponentBuilder<Evaluation> {
+
+            private Float value;
+
+            public Builder value(Float value) {
+                this.value = value;
+                return this;
+            }
+
+            @Override
+            public TestEvaluation build() {
+                return new TestEvaluation(value);
+            }
         }
     }
 

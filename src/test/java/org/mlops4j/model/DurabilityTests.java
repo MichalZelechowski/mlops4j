@@ -62,7 +62,7 @@ public class DurabilityTests {
     public void binaryContentPropertiesPersist() throws DurabilityException {
         byte[] content = new byte[10000];
         for (int i = 0; i < 10000; i++) {
-            content[i] = (byte)i;
+            content[i] = (byte) i;
         }
         ClassWithBinaryContent binaryContent = new ClassWithBinaryContent(content);
         Metadata<ClassWithBinaryContent> metadata = binaryContent.getMetadata();

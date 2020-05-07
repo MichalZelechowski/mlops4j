@@ -31,13 +31,18 @@ public class Result implements Serializable {
     @Getter
     private final ResultStatus status;
     private final String message;
+    private final Exception exception;
 
     public Result() {
-        this(ResultStatus.SUCCESS, null);
+        this(ResultStatus.SUCCESS, null, null);
     }
 
     public Optional<String> getMessage() {
         return Optional.ofNullable(this.message);
+    }
+
+    public Optional<Exception> getException() {
+        return Optional.ofNullable(this.exception);
     }
 
 }

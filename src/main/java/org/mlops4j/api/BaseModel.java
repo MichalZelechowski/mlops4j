@@ -82,7 +82,12 @@ class BaseModel implements Model {
     public CompletableFuture<EvaluationResult> evaluate(DataSet evalSet) {
         return this.evaluator.evaluate(this, evalSet).thenApply(result -> {
             Iterables.addAll(this.evaluations, result.getEvaluations());
-            // TODO store model again!
+            try {
+                this.modelRegistry.put(this);
+            } catch (DurabilityException e) {
+                //TODO add logging
+                return EvaluationResult.failure(this.evaluations, e, "Cannot put model in repository");
+            }
             return result;
         });
     }
