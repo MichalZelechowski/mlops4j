@@ -17,14 +17,18 @@
 
 package org.mlops4j.inference.api;
 
+import lombok.AllArgsConstructor;
+
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
+@AllArgsConstructor
+public class LabelIndex implements Output<Integer> {
 
-public interface Output<VALUE> {
-    VALUE getValue();
+    private final Integer value;
 
-    public static Output<Integer> from(Integer integer) {
-        return new LabelIndex(integer);
+    @Override
+    public Integer getValue() {
+        return this.value;
     }
 }

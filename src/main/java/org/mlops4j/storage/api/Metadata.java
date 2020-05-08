@@ -228,6 +228,10 @@ public class Metadata<T extends Durable<T>> implements Storable {
                 entry = new DurableEntry<>((Metadata<?>) value);
             } else if (value instanceof InputStream) {
                 entry = new BinaryEntry((InputStream) value);
+            } else if (value instanceof Path) {
+                entry = new BinaryEntry((Path) value);
+            } else if (value instanceof File) {
+                entry = new BinaryEntry((File) value);
             } else if (value instanceof Collection) {
                 entry = new ArrayEntry((Collection<?>) value);
             } else {
@@ -243,7 +247,7 @@ public class Metadata<T extends Durable<T>> implements Storable {
                         return new IntegerEntry((Integer) value);
                     case FLOAT:
                         if (value instanceof Integer) {
-                            return new FloatEntry(((Integer)value).floatValue());
+                            return new FloatEntry(((Integer) value).floatValue());
                         }
                         return new FloatEntry((Float) value);
                     case DOUBLE:
@@ -379,6 +383,28 @@ public class Metadata<T extends Durable<T>> implements Storable {
     private static class BinaryEntry extends DurabilityEntry<String, InputStream> {
         protected BinaryEntry(InputStream value) throws DurabilityException {
             super(null);
+            calculateHash(value);
+        }
+
+
+        public BinaryEntry(String value) {
+            super(value);
+        }
+
+        public BinaryEntry(Path value) throws DurabilityException {
+            this(value.toFile());
+        }
+
+        public BinaryEntry(File value) throws DurabilityException {
+            super(null);
+            try (InputStream is = FileUtils.openInputStream(value)) {
+                this.calculateHash(is);
+            } catch (IOException ioex) {
+                throw new DurabilityException(String.format("Cannot read input stream of file %s", value.toString()));
+            }
+        }
+
+        private void calculateHash(InputStream value) throws DurabilityException {
             Hasher hasher = Hashing.sha256().newHasher();
             byte[] buffer = new byte[8196];
             int bytesRead = 0;
@@ -404,10 +430,6 @@ public class Metadata<T extends Durable<T>> implements Storable {
             } catch (IOException ex) {
                 throw new DurabilityException("Cannot create temporary file", ex);
             }
-        }
-
-        public BinaryEntry(String value) {
-            super(value);
         }
 
         @Override
