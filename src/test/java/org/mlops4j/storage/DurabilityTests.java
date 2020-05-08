@@ -15,7 +15,7 @@
  *
  */
 
-package org.mlops4j.model;
+package org.mlops4j.storage;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
