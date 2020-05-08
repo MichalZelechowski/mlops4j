@@ -138,8 +138,7 @@ public class DL4JModelTests {
 
         storedModel = registry.get(model.getId()).orElseThrow(() -> new AssertionError("Cannot find model"));
         assertThat(storedModel.getEvaluations()).hasSize(1);
-//        Evaluation testEvaluation = new ModelTests.TestEvaluation(9.0f);
-//        assertThat(storedModel.getEvaluations().findFirst()).isPresent();
-//        assertThat(storedModel.getEvaluations().findFirst().get()).isEqualTo(testEvaluation);
+        assertThat(storedModel.getEvaluations().findFirst()).isPresent();
+        assertThat(storedModel.getEvaluations().findFirst().get().getDataSetId()).isEqualTo(evalSet.getId());
     }
 }

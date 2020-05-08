@@ -17,6 +17,7 @@
 
 package org.mlops4j.evaluation.api;
 
+import org.mlops4j.dataset.api.DataSetId;
 import org.mlops4j.storage.api.Durable;
 
 import java.util.Optional;
@@ -30,4 +31,6 @@ public interface Evaluation extends Comparable<Evaluation>, Durable<Evaluation> 
     Metric[] getMetrics();
 
     Optional<Metric> getMetric(String name);
+
+    DataSetId getDataSetId();
 }

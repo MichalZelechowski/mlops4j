@@ -30,6 +30,8 @@ import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
@@ -75,8 +77,11 @@ public abstract class DL4JModelEvaluator implements ModelEvaluator {
                 evaluation.setLabelsList((((DataSetIterator) setRepresentation)).getLabels());
                 return CompletableFuture.supplyAsync(() -> {
                     Evaluation[] evaluations = network.doEvaluation((DataSetIterator) setRepresentation, evaluation);
-                    //TODO require real evaluation
-                    return EvaluationResult.success(Collections.emptyList());
+                    return EvaluationResult.success(
+                            Stream.of(evaluations)
+                                    .map(e -> new DL4JEvaluation.Builder().value(e).dataSetId(evalSet.getId()).build())
+                                    .collect(Collectors.toList())
+                    );
                 });
             } else {
                 return CompletableFuture.completedFuture(

@@ -226,6 +226,8 @@ public class Metadata<T extends Durable<T>> implements Storable {
                 entry = new DurableEntry((Durable<?>) value);
             } else if (value instanceof Metadata) {
                 entry = new DurableEntry<>((Metadata<?>) value);
+            } else if (value.getClass().equals(byte[].class)) {
+                entry = new BinaryEntry((byte[]) value);
             } else if (value instanceof InputStream) {
                 entry = new BinaryEntry((InputStream) value);
             } else if (value instanceof Path) {
@@ -402,6 +404,11 @@ public class Metadata<T extends Durable<T>> implements Storable {
             } catch (IOException ioex) {
                 throw new DurabilityException(String.format("Cannot read input stream of file %s", value.toString()));
             }
+        }
+
+        public BinaryEntry(byte[] value) throws DurabilityException {
+            super(null);
+            this.calculateHash(new ByteArrayInputStream(value));
         }
 
         private void calculateHash(InputStream value) throws DurabilityException {

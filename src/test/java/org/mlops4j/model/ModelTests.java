@@ -304,6 +304,11 @@ public class ModelTests {
         }
 
         @Override
+        public DataSetId getDataSetId() {
+            return new DataSetId("test","1","2020");
+        }
+
+        @Override
         public int compareTo(Evaluation o) {
             return 0;
         }
