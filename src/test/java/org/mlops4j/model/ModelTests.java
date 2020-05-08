@@ -23,6 +23,23 @@ import lombok.ToString;
 import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.Test;
 import org.mlops4j.api.*;
+import org.mlops4j.dataset.api.DataSet;
+import org.mlops4j.dataset.api.DataSetId;
+import org.mlops4j.evaluation.api.*;
+import org.mlops4j.inference.api.Inferable;
+import org.mlops4j.inference.api.Inference;
+import org.mlops4j.inference.api.Input;
+import org.mlops4j.inference.api.Output;
+import org.mlops4j.model.api.Model;
+import org.mlops4j.model.api.ModelConfiguration;
+import org.mlops4j.model.impl.BaseModel;
+import org.mlops4j.model.registry.api.ModelRegistry;
+import org.mlops4j.storage.api.ComponentBuilder;
+import org.mlops4j.storage.api.Metadata;
+import org.mlops4j.storage.api.exception.DurabilityException;
+import org.mlops4j.training.api.FitResult;
+import org.mlops4j.training.api.Trainable;
+import org.mlops4j.training.api.Trainer;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -51,7 +68,7 @@ public class ModelTests {
         Trainer trainer = new TestTrainer.Builder().build();
         EvaluationConfiguration evaluationConfiguration = new TestEvaluationConfiguration.Builder().build();
 
-        Model model = new Model.Builder()
+        Model model = new BaseModel.Builder()
                 .configuration(modelConfiguration)
                 .evaluationConfiguration(evaluationConfiguration)
                 .evaluator(evaluator)

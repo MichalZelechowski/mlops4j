@@ -20,10 +20,10 @@ package org.mlops4j.model;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import org.junit.jupiter.api.Test;
-import org.mlops4j.api.ComponentBuilder;
-import org.mlops4j.api.DurabilityException;
-import org.mlops4j.api.Durable;
-import org.mlops4j.api.Metadata;
+import org.mlops4j.storage.api.ComponentBuilder;
+import org.mlops4j.storage.api.exception.DurabilityException;
+import org.mlops4j.storage.api.Durable;
+import org.mlops4j.storage.api.Metadata;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
