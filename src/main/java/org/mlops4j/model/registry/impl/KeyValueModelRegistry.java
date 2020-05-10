@@ -19,6 +19,7 @@ package org.mlops4j.model.registry.impl;
 
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.FileUtils;
+import org.mlops4j.api.exception.StreamException;
 import org.mlops4j.model.api.Model;
 import org.mlops4j.model.api.ModelId;
 import org.mlops4j.model.registry.api.ModelRegistry;
@@ -74,16 +75,26 @@ public class KeyValueModelRegistry implements ModelRegistry {
         final Metadata<Model> metadata = model.getMetadata();
         this.storage.put(new String(model.getId().asBytes()), metadata.asBytes());
         //TODO move it to the same class that performs writing to temporary storage
-        //TODO how about going in parallel
-        for (String hash : metadata.getHashes()) {
-            // TODO think about collision
-            Path path = Paths.get(FileUtils.getTempDirectoryPath(), hash);
-            try {
-                // TODO add store from file
-                storage.put(hash, Files.readAllBytes(path));
-            } catch (IOException e) {
-                throw new DurabilityException(String.format("Cannot read from file %s", path));
-            }
+        StreamException.<DurabilityException>tryRun(() ->
+                //TODO use custom executor
+                metadata.getHashes().parallelStream().forEach(hash -> {
+                    try {
+                        this.putHashedContent(hash);
+                    } catch (DurabilityException e) {
+                        throw new StreamException(e);
+                    }
+                })
+        );
+    }
+
+    private void putHashedContent(String hash) throws DurabilityException {
+        // TODO think about collision
+        Path path = Paths.get(FileUtils.getTempDirectoryPath(), hash);
+        try {
+            // TODO add store from file
+            storage.put(hash, Files.readAllBytes(path));
+        } catch (IOException e) {
+            throw new DurabilityException(String.format("Cannot read from file %s", path));
         }
     }
 
