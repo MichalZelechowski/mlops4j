@@ -32,6 +32,8 @@ import org.json.JSONObject;
 import org.mlops4j.storage.api.exception.ConversionException;
 import org.mlops4j.storage.api.exception.DurabilityException;
 import org.mlops4j.storage.api.exception.UnexpectedTypeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -49,6 +51,7 @@ import java.util.Set;
  */
 
 public class Metadata<T extends Durable<T>> implements Storable {
+    private final static Logger LOG = LoggerFactory.getLogger(Metadata.class);
     private final Map<String, DurabilityEntry<?, ?>> parameters = Maps.newHashMap();
     private Class<? extends ComponentBuilder<T>> builderClass;
     private String builderClassName;
@@ -82,6 +85,7 @@ public class Metadata<T extends Durable<T>> implements Storable {
 
     @Override
     public void fromBytes(byte[] bytes) throws DurabilityException {
+        LOG.debug("Restoring metadata from bytes {}", new String(bytes));
         JSONObject json = new JSONObject(new String(bytes));
         this.fromJSON(json);
     }
