@@ -24,7 +24,7 @@ import java.util.Optional;
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-
+//TODO consider streaming capability
 public interface KeyValueStorage extends Durable<KeyValueStorage> {
 
     void put(String key, byte[] value) throws DurabilityException;
