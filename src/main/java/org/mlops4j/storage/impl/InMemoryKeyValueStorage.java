@@ -17,6 +17,8 @@
 
 package org.mlops4j.storage.impl;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
 import org.apache.commons.text.RandomStringGenerator;
 import org.mlops4j.storage.api.ComponentBuilder;
@@ -24,6 +26,7 @@ import org.mlops4j.storage.api.KeyValueStorage;
 import org.mlops4j.storage.api.Metadata;
 import org.mlops4j.storage.api.exception.DurabilityException;
 
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentMap;
 
@@ -47,6 +50,19 @@ public class InMemoryKeyValueStorage implements KeyValueStorage {
     @Override
     public Optional<byte[]> get(String key) {
         return Optional.ofNullable(this.content.get(key));
+    }
+
+    @Override
+    public Iterator<String> list() {
+        return this.list("");
+    }
+
+    @Override
+    public Iterator<String> list(String prefix) {
+        return Iterators.transform(
+                Iterables.filter(this.content.keySet(), s -> s.startsWith(prefix)).iterator(),
+                s -> prefix.isEmpty() ? s : s.substring(prefix.length() + 1)
+        );
     }
 
     @Override

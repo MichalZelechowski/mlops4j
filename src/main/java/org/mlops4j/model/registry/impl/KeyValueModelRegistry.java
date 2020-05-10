@@ -17,6 +17,7 @@
 
 package org.mlops4j.model.registry.impl;
 
+import com.google.common.collect.Iterators;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.FileUtils;
 import org.mlops4j.api.exception.StreamException;
@@ -33,6 +34,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.Optional;
 
 /**
@@ -41,12 +43,14 @@ import java.util.Optional;
 @AllArgsConstructor
 public class KeyValueModelRegistry implements ModelRegistry {
 
+    private static final String MODELS = "models";
+    private static final String CONTENT = "content";
     private final KeyValueStorage storage;
 
     @Override
     public Optional<Model> get(ModelId id) throws DurabilityException {
         // TODO check if lock is present
-        Optional<byte[]> modelContent = storage.get(new String(id.asBytes()));
+        Optional<byte[]> modelContent = storage.get(MODELS + "/" + new String(id.asBytes()));
         if (modelContent.isPresent()) {
             byte[] modelBinary = modelContent.get();
             Metadata<Model> modelMetadata = new Metadata<>();
@@ -56,7 +60,7 @@ public class KeyValueModelRegistry implements ModelRegistry {
             for (String hash : modelMetadata.getHashes()) {
                 Path targetPath = Paths.get(FileUtils.getTempDirectoryPath(), hash);
                 //TODO think about streaming
-                byte[] content = storage.get(hash).orElseThrow(() -> new DurabilityException(String.format("Missing file with hash %s", hash)));
+                byte[] content = storage.get(CONTENT + "/" + hash).orElseThrow(() -> new DurabilityException(String.format("Missing file with hash %s", hash)));
                 try {
                     FileUtils.writeByteArrayToFile(targetPath.toFile(), content);
                 } catch (IOException e) {
@@ -73,7 +77,7 @@ public class KeyValueModelRegistry implements ModelRegistry {
     public void put(Model model) throws DurabilityException {
         //TODO add lock
         final Metadata<Model> metadata = model.getMetadata();
-        this.storage.put(new String(model.getId().asBytes()), metadata.asBytes());
+        this.storage.put(MODELS + "/" + new String(model.getId().asBytes()), metadata.asBytes());
         //TODO move it to the same class that performs writing to temporary storage
         StreamException.<DurabilityException>tryRun(() ->
                 //TODO use custom executor
@@ -87,12 +91,23 @@ public class KeyValueModelRegistry implements ModelRegistry {
         );
     }
 
+    @Override
+    public Iterator<ModelId> list() throws DurabilityException {
+        return Iterators.transform(storage.list(MODELS),
+                m -> {
+                    ModelId id = new ModelId();
+                    id.fromBytes(m.getBytes());
+                    return id;
+                }
+        );
+    }
+
     private void putHashedContent(String hash) throws DurabilityException {
         // TODO think about collision
         Path path = Paths.get(FileUtils.getTempDirectoryPath(), hash);
         try {
             // TODO add store from file
-            storage.put(hash, Files.readAllBytes(path));
+            storage.put(CONTENT + "/" + hash, Files.readAllBytes(path));
         } catch (IOException e) {
             throw new DurabilityException(String.format("Cannot read from file %s", path));
         }

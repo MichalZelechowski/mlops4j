@@ -19,6 +19,7 @@ package org.mlops4j.storage.api;
 
 import org.mlops4j.storage.api.exception.DurabilityException;
 
+import java.util.Iterator;
 import java.util.Optional;
 
 /**
@@ -30,4 +31,8 @@ public interface KeyValueStorage extends Durable<KeyValueStorage> {
     void put(String key, byte[] value) throws DurabilityException;
 
     Optional<byte[]> get(String key) throws DurabilityException;
+
+    Iterator<String> list() throws DurabilityException;
+
+    Iterator<String> list(String prefix) throws DurabilityException;
 }

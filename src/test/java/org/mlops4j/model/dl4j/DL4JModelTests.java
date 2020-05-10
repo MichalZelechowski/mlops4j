@@ -109,7 +109,7 @@ public class DL4JModelTests {
 
         Future<FitResult> trainFuture = model.fit(trainSet);
 
-        FitResult fitResult = trainFuture.get(10, TimeUnit.HOURS);
+        FitResult fitResult = trainFuture.get(10, TimeUnit.SECONDS);
         assertThat(fitResult.getStatus())
                 .describedAs(fitResult.getMessage().toString()+ ' ' + fitResult.getException())
                 .isEqualTo(ResultStatus.SUCCESS);
@@ -132,7 +132,6 @@ public class DL4JModelTests {
         Input input = DL4JInput.from(new float[]{1.0f, 0.0f, 0.1f, 1.0f});
         Future<Output<Integer>> outputFuture = storedModel.infer(input);
 
-        assertThat(outputFuture).isDone();
         Output<Integer> output = outputFuture.get();
         assertThat(output.getValue()).isBetween(0, 1);
 

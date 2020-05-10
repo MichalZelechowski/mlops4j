@@ -18,6 +18,7 @@
 package org.mlops4j.storage.impl;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterators;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.FileUtils;
 import org.mlops4j.storage.api.ComponentBuilder;
@@ -29,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Iterator;
 import java.util.Optional;
 
 /**
@@ -61,6 +63,23 @@ public class FileSystemKeyValueStorage implements KeyValueStorage {
             }
         } else {
             return Optional.empty();
+        }
+    }
+
+    @Override
+    public Iterator<String> list() throws DurabilityException {
+        return this.list("");
+    }
+
+    @Override
+    public Iterator<String> list(String prefix) throws DurabilityException {
+        try {
+            return Iterators.transform(
+                    Files.walk(this.root.resolve(prefix)).iterator(),
+                    p -> this.root.resolve(prefix).relativize(p).toString()
+            );
+        } catch (IOException e) {
+            throw new DurabilityException(String.format("Cannot walk files %s/%s", this.root, prefix));
         }
     }
 

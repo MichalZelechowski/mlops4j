@@ -17,12 +17,14 @@
 
 package org.mlops4j.model;
 
+import com.google.common.collect.Iterators;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.ToString;
 import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.Test;
-import org.mlops4j.api.*;
+import org.mlops4j.api.Representation;
+import org.mlops4j.api.ResultStatus;
 import org.mlops4j.dataset.api.DataSet;
 import org.mlops4j.dataset.api.DataSetId;
 import org.mlops4j.evaluation.api.*;
@@ -32,6 +34,7 @@ import org.mlops4j.inference.api.Input;
 import org.mlops4j.inference.api.Output;
 import org.mlops4j.model.api.Model;
 import org.mlops4j.model.api.ModelConfiguration;
+import org.mlops4j.model.api.ModelId;
 import org.mlops4j.model.impl.BaseModel;
 import org.mlops4j.model.registry.api.ModelRegistry;
 import org.mlops4j.storage.api.ComponentBuilder;
@@ -45,7 +48,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -62,22 +67,8 @@ public class ModelTests {
     @Test
     public void modelTrainEvaluateAndPredict() throws ExecutionException, InterruptedException, DurabilityException {
         ModelRegistry registry = new ModelRegistry.Builder().build();
-        ModelConfiguration modelConfiguration = new TestModelConfiguration.Builder().build();
-        ModelEvaluator evaluator = new TestModelEvaluator.Builder().build();
-        Inference inference = new TestInference.Builder().build();
-        Trainer trainer = new TestTrainer.Builder().build();
-        EvaluationConfiguration evaluationConfiguration = new TestEvaluationConfiguration.Builder().build();
 
-        Model model = new BaseModel.Builder()
-                .configuration(modelConfiguration)
-                .evaluationConfiguration(evaluationConfiguration)
-                .evaluator(evaluator)
-                .inference(inference)
-                .trainer(trainer)
-                .modelRegistry(registry)
-                .name("testModel")
-                .version("1.0")
-                .build();
+        Model model = getModel(registry);
 
         DataSet trainSet = new TestDataSet.Builder().build();
 
@@ -110,6 +101,49 @@ public class ModelTests {
         Evaluation testEvaluation = new TestEvaluation(9.0f);
         assertThat(storedModel.getEvaluations().findFirst()).isPresent();
         assertThat(storedModel.getEvaluations().findFirst().get()).isEqualTo(testEvaluation);
+    }
+
+    private Model getModel(ModelRegistry registry) {
+        ModelConfiguration modelConfiguration = new TestModelConfiguration.Builder().build();
+        ModelEvaluator evaluator = new TestModelEvaluator.Builder().build();
+        Inference inference = new TestInference.Builder().build();
+        Trainer trainer = new TestTrainer.Builder().build();
+        EvaluationConfiguration evaluationConfiguration = new TestEvaluationConfiguration.Builder().build();
+
+        return new BaseModel.Builder()
+                .configuration(modelConfiguration)
+                .evaluationConfiguration(evaluationConfiguration)
+                .evaluator(evaluator)
+                .inference(inference)
+                .trainer(trainer)
+                .modelRegistry(registry)
+                .name("testModel")
+                .version("1.0")
+                .build();
+    }
+
+    @Test
+    public void modelTrainingReiterate() throws ExecutionException, InterruptedException, DurabilityException {
+        ModelRegistry registry = new ModelRegistry.Builder().build();
+
+        Model model = getModel(registry);
+
+        DataSet trainSet = new TestDataSet.Builder().build();
+
+        Future<FitResult> trainFuture = model.fit(trainSet).thenCompose(ft -> model.fit(trainSet));
+
+        assertThat(trainFuture).isDone();
+        FitResult fitResult = trainFuture.get();
+        assertThat(fitResult.getStatus()).describedAs(fitResult.getMessage().toString() + fitResult.getException().toString()).isEqualTo(ResultStatus.SUCCESS);
+
+        ModelId[] modelIds = Iterators.toArray(registry.list(), ModelId.class);
+        assertThat(modelIds).hasSize(2);
+        Arrays.sort(modelIds, Comparator.comparing(ModelId::getIteration));
+
+        assertThat(modelIds[0].getDataSetId().equals(trainSet.getId()));
+        assertThat(modelIds[1].getDataSetId().equals(trainSet.getId()));
+        assertThat(modelIds[0].getIteration().equals(10));
+        assertThat(modelIds[1].getIteration().equals(20));
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -305,7 +339,7 @@ public class ModelTests {
 
         @Override
         public DataSetId getDataSetId() {
-            return new DataSetId("test","1","2020");
+            return new DataSetId("test", "1", "2020");
         }
 
         @Override
@@ -388,14 +422,20 @@ public class ModelTests {
     public static class ThirdPartyDataSetRepresentation {
 
         private int size;
+        private int counter;
 
         public ThirdPartyDataSetRepresentation(int size) {
             this.size = size;
+            this.counter = size;
         }
 
         public boolean hasNext() {
-            size--;
-            return size != 0;
+            counter--;
+            boolean result = counter != 0;
+            if (!result) {
+                counter = size;
+            }
+            return result;
         }
     }
 
