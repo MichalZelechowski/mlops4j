@@ -105,6 +105,7 @@ public abstract class DL4JModelConfiguration<MODEL extends Model> implements Mod
                 throw new DurabilityException("Cannot serialize network", e);
             } finally {
                 if (tempFile != null) {
+                    //noinspection ResultOfMethodCallIgnored
                     tempFile.toFile().delete();
                 }
             }

@@ -129,6 +129,7 @@ public abstract class DL4JEvaluation implements Evaluation {
 
         @Override
         public int compareTo(Evaluation o) {
+            //TODO figure out real comparision, probably with injectable comparator
             return 0;
         }
 

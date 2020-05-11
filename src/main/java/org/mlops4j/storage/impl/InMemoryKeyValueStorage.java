@@ -67,7 +67,7 @@ public class InMemoryKeyValueStorage implements KeyValueStorage {
 
     @Override
     public Metadata<KeyValueStorage> getMetadata() throws DurabilityException {
-        return new Metadata<KeyValueStorage>(this).withParameter("name", this.name);
+        return new Metadata<>(this).withParameter("name", this.name);
     }
 
     @Override

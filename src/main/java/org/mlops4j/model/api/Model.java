@@ -17,22 +17,12 @@
 
 package org.mlops4j.model.api;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import org.mlops4j.evaluation.api.Evaluable;
 import org.mlops4j.evaluation.api.Evaluation;
-import org.mlops4j.evaluation.api.EvaluationConfiguration;
-import org.mlops4j.evaluation.api.ModelEvaluator;
 import org.mlops4j.inference.api.Inferable;
-import org.mlops4j.inference.api.Inference;
-import org.mlops4j.model.impl.BaseModel;
-import org.mlops4j.model.registry.api.ModelRegistry;
-import org.mlops4j.storage.api.ComponentBuilder;
 import org.mlops4j.storage.api.Durable;
 import org.mlops4j.training.api.Trainable;
-import org.mlops4j.training.api.Trainer;
 
-import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
 

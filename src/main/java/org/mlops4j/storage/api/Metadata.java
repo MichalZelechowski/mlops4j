@@ -418,7 +418,7 @@ public class Metadata<T extends Durable<T>> implements Storable {
         private void calculateHash(InputStream value) throws DurabilityException {
             Hasher hasher = Hashing.sha256().newHasher();
             byte[] buffer = new byte[8196];
-            int bytesRead = 0;
+            int bytesRead;
             try {
                 Path tmpFile = Files.createTempFile("mlops4j", ".bin");
                 try (OutputStream ous = new BufferedOutputStream(new FileOutputStream(tmpFile.toFile()))) {
@@ -502,8 +502,8 @@ public class Metadata<T extends Durable<T>> implements Storable {
         @Override
         public Collection getValue() throws DurabilityException {
             List real = Lists.newLinkedList();
-            for (int i = 0; i < this.value.length; i++) {
-                real.add(this.value[i].getValue());
+            for (DurabilityEntry durabilityEntry : this.value) {
+                real.add(durabilityEntry.getValue());
             }
             return real;
         }

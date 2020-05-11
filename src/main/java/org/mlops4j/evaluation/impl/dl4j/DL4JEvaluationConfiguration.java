@@ -66,7 +66,7 @@ public abstract class DL4JEvaluationConfiguration implements EvaluationConfigura
 
     private static class NeuralNetworkEvaluationConfiguration extends DL4JEvaluationConfiguration {
 
-        private NeuralNetwork network;
+        private final NeuralNetwork network;
 
         private NeuralNetworkEvaluationConfiguration(NeuralNetwork network) {
             this.network = network;
@@ -77,6 +77,7 @@ public abstract class DL4JEvaluationConfiguration implements EvaluationConfigura
             return Representation.of(this.network);
         }
 
+        @SuppressWarnings("ResultOfMethodCallIgnored")
         @Override
         public Metadata getMetadata() throws DurabilityException {
             Path tempFile = null;

@@ -59,7 +59,7 @@ public class BaseModel implements Model {
     private final Inference inference;
     private final Trainer trainer;
     private ModelId id;
-    private ModelId parent = null;
+    private ModelId parent;
     private final ModelRegistry modelRegistry;
     private final Collection<Evaluation> evaluations;
 
@@ -184,7 +184,7 @@ public class BaseModel implements Model {
         private ModelRegistry registry;
         private ModelId parent;
         private ModelId id;
-        private Collection<Evaluation> evaluations = Lists.newLinkedList();
+        private final Collection<Evaluation> evaluations = Lists.newLinkedList();
 
         public Builder configuration(ModelConfiguration configuration) {
             this.configuration = configuration;
