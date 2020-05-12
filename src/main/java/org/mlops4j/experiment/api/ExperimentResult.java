@@ -15,39 +15,25 @@
  *
  */
 
-package org.mlops4j.api;
+package org.mlops4j.experiment.api;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
-
-import java.io.Serializable;
-import java.util.Optional;
+import org.mlops4j.api.Result;
+import org.mlops4j.api.ResultStatus;
+import org.mlops4j.evaluation.api.EvaluationResult;
+import org.mlops4j.training.api.FitResult;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-@AllArgsConstructor
-@ToString
-public class Result implements Serializable {
-    @Getter
-    private final ResultStatus status;
-    private final String message;
-    private final Exception exception;
 
-    public Result() {
-        this(ResultStatus.SUCCESS, null, null);
+public class ExperimentResult extends Result {
+    private final FitResult fitResult;
+    private final EvaluationResult evaluationResult;
+
+    public ExperimentResult(FitResult fitResult, EvaluationResult evaluationResult) {
+        super(ResultStatus.combined(fitResult.getStatus(), evaluationResult.getStatus()), null, null);
+        this.fitResult = fitResult;
+        this.evaluationResult = evaluationResult;
     }
 
-    public Optional<String> getMessage() {
-        return Optional.ofNullable(this.message);
-    }
-
-    public Optional<Exception> getException() {
-        return Optional.ofNullable(this.exception);
-    }
-
-    public boolean isSuccessful() {
-        return this.status == ResultStatus.SUCCESS;
-    }
 }

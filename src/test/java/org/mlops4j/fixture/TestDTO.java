@@ -15,39 +15,22 @@
  *
  */
 
-package org.mlops4j.api;
+package org.mlops4j.fixture;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
-
-import java.io.Serializable;
-import java.util.Optional;
+import org.mlops4j.inference.api.Input;
+import org.mlops4j.inference.api.Output;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-@AllArgsConstructor
-@ToString
-public class Result implements Serializable {
-    @Getter
-    private final ResultStatus status;
-    private final String message;
-    private final Exception exception;
+public class TestDTO implements Input<Float>, Output<Float> {
+    private Float x;
 
-    public Result() {
-        this(ResultStatus.SUCCESS, null, null);
+    public TestDTO(Float x) {
+        this.x = x;
     }
 
-    public Optional<String> getMessage() {
-        return Optional.ofNullable(this.message);
-    }
-
-    public Optional<Exception> getException() {
-        return Optional.ofNullable(this.exception);
-    }
-
-    public boolean isSuccessful() {
-        return this.status == ResultStatus.SUCCESS;
+    public Float getValue() {
+        return this.x;
     }
 }

@@ -15,39 +15,33 @@
  *
  */
 
-package org.mlops4j.api;
+package org.mlops4j.fixture;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
-
-import java.io.Serializable;
-import java.util.Optional;
+import org.mlops4j.api.Representation;
+import org.mlops4j.dataset.api.DataSet;
+import org.mlops4j.dataset.api.DataSetId;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-@AllArgsConstructor
-@ToString
-public class Result implements Serializable {
-    @Getter
-    private final ResultStatus status;
-    private final String message;
-    private final Exception exception;
-
-    public Result() {
-        this(ResultStatus.SUCCESS, null, null);
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class TestDataSet implements DataSet {
+    @Override
+    public Representation getRepresentation() {
+        return Representation.of(new ThirdPartyDataSetRepresentation(10));
     }
 
-    public Optional<String> getMessage() {
-        return Optional.ofNullable(this.message);
+    @Override
+    public DataSetId getId() {
+        return new DataSetId("testSet", "v1", "20200427");
     }
 
-    public Optional<Exception> getException() {
-        return Optional.ofNullable(this.exception);
-    }
+    public static class Builder {
 
-    public boolean isSuccessful() {
-        return this.status == ResultStatus.SUCCESS;
+        public TestDataSet build() {
+            return new TestDataSet();
+        }
     }
 }

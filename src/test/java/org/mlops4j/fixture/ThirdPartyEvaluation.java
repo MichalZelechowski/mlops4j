@@ -15,39 +15,20 @@
  *
  */
 
-package org.mlops4j.api;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
-
-import java.io.Serializable;
-import java.util.Optional;
+package org.mlops4j.fixture;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-@AllArgsConstructor
-@ToString
-public class Result implements Serializable {
-    @Getter
-    private final ResultStatus status;
-    private final String message;
-    private final Exception exception;
-
-    public Result() {
-        this(ResultStatus.SUCCESS, null, null);
+public class ThirdPartyEvaluation {
+    public ThirdPartyEvaluation() {
     }
 
-    public Optional<String> getMessage() {
-        return Optional.ofNullable(this.message);
-    }
-
-    public Optional<Exception> getException() {
-        return Optional.ofNullable(this.exception);
-    }
-
-    public boolean isSuccessful() {
-        return this.status == ResultStatus.SUCCESS;
+    public float evaluate(ThirdPartyDataSetRepresentation dataSet) {
+        int counter = 0;
+        while (dataSet.hasNext()) {
+            counter++;
+        }
+        return counter;
     }
 }

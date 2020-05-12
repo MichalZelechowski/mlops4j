@@ -15,18 +15,35 @@
  *
  */
 
-package org.mlops4j.api;
+package org.mlops4j.experiment.api;
 
-import java.util.stream.Stream;
+import org.mlops4j.experiment.impl.SingleExperiment;
+import org.mlops4j.model.api.Model;
+import org.mlops4j.storage.api.ComponentBuilder;
+import org.mlops4j.storage.api.Durable;
+
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
 
-public enum ResultStatus {
-    SUCCESS, FAILURE;
+public interface Experiment extends Durable<Experiment> {
 
-    public static ResultStatus combined(ResultStatus... statuses) {
-        return Stream.of(statuses).allMatch(s -> SUCCESS == s) ? ResultStatus.SUCCESS : ResultStatus.FAILURE;
+    CompletableFuture<ExperimentResult> run();
+
+    public static class Builder implements ComponentBuilder<Experiment> {
+
+        private Model model;
+
+        @Override
+        public Experiment build() {
+            return new SingleExperiment(model);
+        }
+
+        public Builder model(Model model) {
+            this.model = model;
+            return this;
+        }
     }
 }
