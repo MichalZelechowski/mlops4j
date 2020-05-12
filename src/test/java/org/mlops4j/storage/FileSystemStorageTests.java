@@ -19,6 +19,7 @@ package org.mlops4j.storage;
 
 import com.google.common.io.Files;
 import org.junit.jupiter.api.Test;
+import org.mlops4j.storage.api.KeyValueStorage;
 import org.mlops4j.storage.api.exception.DurabilityException;
 import org.mlops4j.storage.impl.FileSystemKeyValueStorage;
 
@@ -34,7 +35,7 @@ public class FileSystemStorageTests {
 
     @Test
     public void testReadAndWrite() throws DurabilityException {
-        FileSystemKeyValueStorage storage = new FileSystemKeyValueStorage.Builder().root(Files.createTempDir()).build();
+        KeyValueStorage storage = new FileSystemKeyValueStorage.Builder().root(Files.createTempDir()).build();
         Random rnd = new Random();
         byte[] object_1 = new byte[100];
         byte[] object_2 = new byte[1000];

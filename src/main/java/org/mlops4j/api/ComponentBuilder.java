@@ -15,13 +15,13 @@
  *
  */
 
-package org.mlops4j.storage.api;
+package org.mlops4j.api;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
 
-public interface ComponentBuilder<COMPONENT extends Durable> {
+public interface ComponentBuilder<COMPONENT extends Component> {
 
     COMPONENT build();
 

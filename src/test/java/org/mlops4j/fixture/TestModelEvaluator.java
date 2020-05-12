@@ -24,7 +24,7 @@ import org.mlops4j.dataset.api.DataSet;
 import org.mlops4j.evaluation.api.Evaluable;
 import org.mlops4j.evaluation.api.EvaluationResult;
 import org.mlops4j.evaluation.api.ModelEvaluator;
-import org.mlops4j.storage.api.ComponentBuilder;
+import org.mlops4j.api.ComponentBuilder;
 import org.mlops4j.storage.api.Metadata;
 import org.mlops4j.storage.api.exception.DurabilityException;
 
@@ -57,7 +57,7 @@ public class TestModelEvaluator implements ModelEvaluator {
     }
 
     @Override
-    public ComponentBuilder<ModelEvaluator> getBuilder() {
+    public ComponentBuilder<? super ModelEvaluator> getBuilder() {
         return new Builder();
     }
 

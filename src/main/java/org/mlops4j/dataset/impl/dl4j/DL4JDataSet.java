@@ -17,13 +17,20 @@
 
 package org.mlops4j.dataset.impl.dl4j;
 
+import com.google.common.base.Preconditions;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.mlops4j.api.Representation;
+import org.datavec.api.records.reader.impl.csv.CSVRecordReader;
+import org.datavec.api.split.FileSplit;
+import org.mlops4j.api.ComponentBuilder;
 import org.mlops4j.dataset.api.DataSet;
 import org.mlops4j.dataset.api.DataSetId;
-import org.nd4j.linalg.dataset.adapter.SingletonDataSetIterator;
-import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
+import org.mlops4j.storage.api.Metadata;
+import org.mlops4j.storage.api.exception.DurabilityException;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
@@ -39,27 +46,102 @@ public abstract class DL4JDataSet<D> implements DataSet<D> {
         return this.id;
     }
 
-    public static DL4JDataSet<DataSetIterator> from(DataSetId id, DataSetIterator iterator) {
-        return new DataSetWithIterator(id, iterator);
+    @Override
+    public Builder getBuilder() {
+        return new Builder();
     }
 
-    public static DL4JDataSet<DataSetIterator> from(DataSetId id, org.nd4j.linalg.dataset.DataSet set) {
-        return new DataSetWithIterator(id, new SingletonDataSetIterator(set));
+    @Override
+    public Metadata<DataSet<D>> getMetadata() throws DurabilityException {
+        return new Metadata<>(this)
+                .withParameter("name", this.id.getName())
+                .withParameter("version", this.id.getVersion())
+                .withParameter("partition", this.id.getPartition());
     }
 
-    private static class DataSetWithIterator extends DL4JDataSet<DataSetIterator> {
+    public static class Builder<D> implements ComponentBuilder<DL4JDataSet<D>> {
 
-        private final DataSetIterator iterator;
+        private File csv;
+        private int batchSize = 32;
+        private String name;
+        private String version;
+        private String partition;
+        private org.nd4j.linalg.dataset.DataSet set;
 
-        public DataSetWithIterator(DataSetId id, DataSetIterator iterator) {
-            super(id);
-            this.iterator = iterator;
+        public Builder<D> csv(File file) {
+            this.csv = file;
+            return this;
+        }
+
+        public Builder<D> csv(String name) {
+            this.csv = new File(name);
+            return this;
+        }
+
+        public Builder<D> batchSize(int batchSize) {
+            this.batchSize = batchSize;
+            return this;
+        }
+
+        public Builder<D> name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder<D> version(String version) {
+            this.version = version;
+            return this;
+        }
+
+        public Builder<D> partition(String partition) {
+            this.partition = partition;
+            return this;
+        }
+
+        private DataSetId getId() {
+            return new DataSetId(name, version, partition);
+        }
+
+        public Builder<D> set(org.nd4j.linalg.dataset.DataSet set) {
+            this.set = set;
+            return this;
+        }
+
+        public Builder<D> set(InputStream stream) {
+            this.set = new org.nd4j.linalg.dataset.DataSet();
+            this.set.load(stream);
+            return this;
         }
 
         @Override
-        public Representation<DataSetIterator> getRepresentation() {
-            return Representation.of(this.iterator);
+        public DL4JDataSet<D> build() {
+            Preconditions.checkNotNull(this.name, "DataSet has to be named");
+            Preconditions.checkNotNull(this.version, "DataSet has to be versioned");
+            Preconditions.checkNotNull(this.partition, "DataSet has to have partition");
+
+            if (csv != null) {
+                try {
+                    CSVRecordReader reader = new CSVRecordReader();
+                    reader.initialize(new FileSplit(this.csv));
+                    return (DL4JDataSet<D>) new CSVDataSet(getId(), reader, this.batchSize, this.name);
+                } catch (IOException e) {
+                    throw new IllegalArgumentException(String.format("Could not read csv file %s", this.csv), e);
+                } catch (InterruptedException e) {
+                    throw new IllegalArgumentException(String.format("Reading of csv file %s interrupted", this.csv), e);
+                }
+            }
+            if (this.set != null) {
+                return (DL4JDataSet<D>) new SingleDataSet(getId(), this.set);
+            }
+            throw new UnsupportedOperationException("Cannot build data set from given arguments");
         }
 
+        public Builder<D> id(DataSetId id) {
+            this.name = id.getName();
+            this.version = id.getVersion();
+            this.partition = id.getPartition();
+            return this;
+        }
     }
+
 }

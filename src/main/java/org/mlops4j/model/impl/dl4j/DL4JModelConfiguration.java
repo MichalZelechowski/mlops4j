@@ -23,7 +23,7 @@ import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.util.ModelSerializer;
 import org.mlops4j.api.Representation;
 import org.mlops4j.model.api.ModelConfiguration;
-import org.mlops4j.storage.api.ComponentBuilder;
+import org.mlops4j.api.ComponentBuilder;
 import org.mlops4j.storage.api.Metadata;
 import org.mlops4j.storage.api.exception.DurabilityException;
 
@@ -44,9 +44,9 @@ public abstract class DL4JModelConfiguration<MODEL extends Model> implements Mod
         private MultiLayerNetwork network;
 
         @Override
-        public DL4JModelConfiguration build() {
+        public DL4JModelConfiguration<MODEL> build() {
             if (multilayerConfiguration != null) {
-                return new MultiLayerModelConfiguration(multilayerConfiguration, network);
+                return (DL4JModelConfiguration<MODEL>) new MultiLayerModelConfiguration(multilayerConfiguration, network);
             }
             throw new IllegalArgumentException("No recognized configuration set");
         }
@@ -67,7 +67,7 @@ public abstract class DL4JModelConfiguration<MODEL extends Model> implements Mod
     }
 
     @Override
-    public ComponentBuilder getBuilder() {
+    public ComponentBuilder<? super ModelConfiguration<MODEL>> getBuilder() {
         return new Builder();
     }
 

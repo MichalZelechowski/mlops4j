@@ -22,7 +22,7 @@ import org.mlops4j.dataset.api.DataSet;
 import org.mlops4j.evaluation.api.Evaluable;
 import org.mlops4j.evaluation.api.EvaluationResult;
 import org.mlops4j.evaluation.api.ModelEvaluator;
-import org.mlops4j.storage.api.ComponentBuilder;
+import org.mlops4j.api.ComponentBuilder;
 import org.mlops4j.storage.api.Metadata;
 import org.mlops4j.storage.api.exception.DurabilityException;
 import org.nd4j.evaluation.classification.Evaluation;
@@ -44,7 +44,7 @@ public abstract class DL4JModelEvaluator implements ModelEvaluator {
         private EvaluationType type = EvaluationType.BASE;
 
         @Override
-        public DL4JModelEvaluator build() {
+        public ModelEvaluator build() {
             switch (type) {
                 case BASE:
                     return new BaseEvaluator();
@@ -60,7 +60,7 @@ public abstract class DL4JModelEvaluator implements ModelEvaluator {
     }
 
     @Override
-    public ComponentBuilder<ModelEvaluator> getBuilder() {
+    public ComponentBuilder<? super ModelEvaluator> getBuilder() {
         return new Builder();
     }
 

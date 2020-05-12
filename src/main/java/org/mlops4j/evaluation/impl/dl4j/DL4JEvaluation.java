@@ -23,7 +23,7 @@ import lombok.AllArgsConstructor;
 import org.mlops4j.dataset.api.DataSetId;
 import org.mlops4j.evaluation.api.Evaluation;
 import org.mlops4j.evaluation.api.Metric;
-import org.mlops4j.storage.api.ComponentBuilder;
+import org.mlops4j.api.ComponentBuilder;
 import org.mlops4j.storage.api.Metadata;
 import org.mlops4j.storage.api.exception.DurabilityException;
 import org.nd4j.evaluation.IEvaluation;
@@ -55,7 +55,7 @@ public abstract class DL4JEvaluation implements Evaluation {
         private DataSetId dataSetId;
 
         @Override
-        public DL4JEvaluation build() {
+        public Evaluation build() {
             Preconditions.checkNotNull(dataSetId, "DataSetId not set");
             if (value != null) {
                 return new DL4JIEvaluation(dataSetId, value);
@@ -104,7 +104,7 @@ public abstract class DL4JEvaluation implements Evaluation {
     }
 
     @Override
-    public ComponentBuilder<Evaluation> getBuilder() {
+    public ComponentBuilder<? super Evaluation> getBuilder() {
         return new Builder();
     }
 

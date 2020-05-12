@@ -15,38 +15,33 @@
  *
  */
 
-package org.mlops4j.fixture;
+package org.mlops4j.dataset.impl.dl4j;
 
-import org.mlops4j.api.Representation;
-import org.mlops4j.evaluation.api.EvaluationConfiguration;
-import org.mlops4j.api.ComponentBuilder;
+import org.mlops4j.dataset.api.DataSetId;
 import org.mlops4j.storage.api.Metadata;
 import org.mlops4j.storage.api.exception.DurabilityException;
+import org.nd4j.linalg.dataset.DataSet;
+import org.nd4j.linalg.dataset.adapter.SingletonDataSetIterator;
+import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
+
+import java.io.ByteArrayOutputStream;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-public class TestEvaluationConfiguration implements EvaluationConfiguration {
 
-    @Override
-    public Representation getEvaluationRepresentation() {
-        return Representation.of(new ThirdPartyEvaluation());
+public class SingleDataSet extends DL4JIteratorDataSet {
+    private final DataSet set;
+
+    protected SingleDataSet(DataSetId id, org.nd4j.linalg.dataset.DataSet set) {
+        super(id, new SingletonDataSetIterator(set));
+        this.set = set;
     }
 
     @Override
-    public Metadata getMetadata() throws DurabilityException {
-        return new Metadata(this);
-    }
-
-    @Override
-    public ComponentBuilder getBuilder() {
-        return new Builder();
-    }
-
-    public static class Builder implements ComponentBuilder<EvaluationConfiguration> {
-
-        public EvaluationConfiguration build() {
-            return new TestEvaluationConfiguration();
-        }
+    public Metadata<org.mlops4j.dataset.api.DataSet<DataSetIterator>> getMetadata() throws DurabilityException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        set.save(bos);
+        return super.getMetadata().withParameter("set", bos.toByteArray());
     }
 }

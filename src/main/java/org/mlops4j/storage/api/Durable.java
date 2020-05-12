@@ -17,14 +17,14 @@
 
 package org.mlops4j.storage.api;
 
+import org.mlops4j.api.Component;
 import org.mlops4j.storage.api.exception.DurabilityException;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
 
-public interface Durable<T extends Durable<T>> {
+public interface Durable<T extends Durable<T>> extends Component<T> {
     Metadata<T> getMetadata() throws DurabilityException;
 
-    ComponentBuilder<T> getBuilder();
 }

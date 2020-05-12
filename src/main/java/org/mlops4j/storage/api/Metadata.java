@@ -29,6 +29,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.mlops4j.api.ComponentBuilder;
 import org.mlops4j.storage.api.exception.ConversionException;
 import org.mlops4j.storage.api.exception.DurabilityException;
 import org.mlops4j.storage.api.exception.UnexpectedTypeException;
@@ -53,21 +54,21 @@ import java.util.Set;
 public class Metadata<T extends Durable<T>> implements Storable {
     private final static Logger LOG = LoggerFactory.getLogger(Metadata.class);
     private final Map<String, DurabilityEntry<?, ?>> parameters = Maps.newHashMap();
-    private Class<? extends ComponentBuilder<T>> builderClass;
+    private Class<? extends ComponentBuilder> builderClass;
     private String builderClassName;
-    private ComponentBuilder<T> builder;
+    private ComponentBuilder<? super T> builder;
 
     public Metadata(T durable) {
         this(durable.getBuilder());
     }
 
-    public Metadata(ComponentBuilder<T> builder) {
+    public Metadata(ComponentBuilder<? super T> builder) {
         this.builder = builder;
-        this.builderClass = (Class<? extends ComponentBuilder<T>>) builder.getClass();
+        this.builderClass = builder.getClass();
         this.builderClassName = this.builderClass.getName();
     }
 
-    public Metadata(Class<? extends ComponentBuilder<T>> builderClass) {
+    public Metadata(Class<? extends ComponentBuilder<? super T>> builderClass) {
         this.builderClassName = builderClass.getName();
         this.builderClass = builderClass;
         this.builder = tryCreatingBuilder();
@@ -160,7 +161,7 @@ public class Metadata<T extends Durable<T>> implements Storable {
                 }
             }
         }
-        return this.builder.build();
+        return (T) this.builder.build();
     }
 
     @Override

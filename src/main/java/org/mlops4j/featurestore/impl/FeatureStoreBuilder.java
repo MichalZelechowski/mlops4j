@@ -15,17 +15,17 @@
  *
  */
 
-package org.mlops4j.dataset.api;
+package org.mlops4j.featurestore.impl;
 
-import org.mlops4j.api.Representation;
-import org.mlops4j.storage.api.Durable;
+import org.mlops4j.featurestore.api.FeatureStore;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
 
-public interface DataSet<DATA> extends Durable<DataSet<DATA>> {
-    Representation<DATA> getRepresentation();
+public class FeatureStoreBuilder {
+    public FeatureStore build() {
+        return new InMemoryFeatureStore();
+    }
 
-    DataSetId getId();
 }

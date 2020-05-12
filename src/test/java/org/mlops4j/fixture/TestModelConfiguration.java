@@ -21,7 +21,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.mlops4j.api.Representation;
 import org.mlops4j.model.api.ModelConfiguration;
-import org.mlops4j.storage.api.ComponentBuilder;
+import org.mlops4j.api.ComponentBuilder;
 import org.mlops4j.storage.api.Metadata;
 import org.mlops4j.storage.api.exception.DurabilityException;
 

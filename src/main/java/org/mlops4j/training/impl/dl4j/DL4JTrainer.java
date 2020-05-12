@@ -19,7 +19,7 @@ package org.mlops4j.training.impl.dl4j;
 
 import org.deeplearning4j.nn.api.NeuralNetwork;
 import org.mlops4j.dataset.api.DataSet;
-import org.mlops4j.storage.api.ComponentBuilder;
+import org.mlops4j.api.ComponentBuilder;
 import org.mlops4j.storage.api.Metadata;
 import org.mlops4j.storage.api.exception.DurabilityException;
 import org.mlops4j.training.api.FitResult;
@@ -41,7 +41,7 @@ public abstract class DL4JTrainer implements Trainer {
         private Integer epochs = 1;
 
         @Override
-        public DL4JTrainer build() {
+        public Trainer build() {
             return new NeuralNetworkTrainer(epochs);
         }
 
@@ -53,7 +53,7 @@ public abstract class DL4JTrainer implements Trainer {
 
 
     @Override
-    public ComponentBuilder<Trainer> getBuilder() {
+    public ComponentBuilder<? super Trainer> getBuilder() {
         return new Builder();
     }
 

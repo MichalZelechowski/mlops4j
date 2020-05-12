@@ -21,7 +21,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
 import org.apache.commons.text.RandomStringGenerator;
-import org.mlops4j.storage.api.ComponentBuilder;
+import org.mlops4j.api.ComponentBuilder;
 import org.mlops4j.storage.api.KeyValueStorage;
 import org.mlops4j.storage.api.Metadata;
 import org.mlops4j.storage.api.exception.DurabilityException;
@@ -71,7 +71,7 @@ public class InMemoryKeyValueStorage implements KeyValueStorage {
     }
 
     @Override
-    public ComponentBuilder<KeyValueStorage> getBuilder() {
+    public ComponentBuilder<? super KeyValueStorage> getBuilder() {
         return new Builder();
     }
 
@@ -81,7 +81,7 @@ public class InMemoryKeyValueStorage implements KeyValueStorage {
         private String name;
 
         @Override
-        public InMemoryKeyValueStorage build() {
+        public KeyValueStorage build() {
             String name = Optional.ofNullable(this.name)
                     .orElse(new RandomStringGenerator.Builder().withinRange('a', 'z').build().generate(40));
             MAPS.computeIfAbsent(name, n -> Maps.newConcurrentMap());

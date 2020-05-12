@@ -15,17 +15,14 @@
  *
  */
 
-package org.mlops4j.dataset.api;
-
-import org.mlops4j.api.Representation;
-import org.mlops4j.storage.api.Durable;
+package org.mlops4j.api;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
 
-public interface DataSet<DATA> extends Durable<DataSet<DATA>> {
-    Representation<DATA> getRepresentation();
+public interface Component<SELF extends Component> {
 
-    DataSetId getId();
+    ComponentBuilder<? super SELF> getBuilder();
+
 }

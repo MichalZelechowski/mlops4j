@@ -22,7 +22,7 @@ import org.mlops4j.inference.api.Inferable;
 import org.mlops4j.inference.api.Inference;
 import org.mlops4j.inference.api.Input;
 import org.mlops4j.inference.api.Output;
-import org.mlops4j.storage.api.ComponentBuilder;
+import org.mlops4j.api.ComponentBuilder;
 import org.mlops4j.storage.api.Metadata;
 import org.mlops4j.storage.api.exception.DurabilityException;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -42,10 +42,10 @@ public abstract class DL4JInference<I extends Input<?>, O extends Output<?>> imp
         private InferenceType type = InferenceType.SINGLE;
 
         @Override
-        public DL4JInference build() {
+        public DL4JInference<I, O> build() {
             switch (type) {
                 case SINGLE:
-                    return new SingleInference();
+                    return (DL4JInference<I, O>) new SingleInference();
             }
             return null;
         }
@@ -92,7 +92,7 @@ public abstract class DL4JInference<I extends Input<?>, O extends Output<?>> imp
     }
 
     @Override
-    public ComponentBuilder<Inference<I, O>> getBuilder() {
+    public ComponentBuilder<? super Inference<I, O>> getBuilder() {
         return new Builder();
     }
 

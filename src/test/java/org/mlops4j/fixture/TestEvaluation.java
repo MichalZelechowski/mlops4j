@@ -22,7 +22,7 @@ import org.mlops4j.dataset.api.DataSetId;
 import org.mlops4j.evaluation.api.Evaluation;
 import org.mlops4j.evaluation.api.Metric;
 import org.mlops4j.evaluation.api.SingleMetricValue;
-import org.mlops4j.storage.api.ComponentBuilder;
+import org.mlops4j.api.ComponentBuilder;
 import org.mlops4j.storage.api.Metadata;
 import org.mlops4j.storage.api.exception.DurabilityException;
 
@@ -70,7 +70,7 @@ public class TestEvaluation implements Evaluation {
     }
 
     @Override
-    public ComponentBuilder<Evaluation> getBuilder() {
+    public ComponentBuilder<? super Evaluation> getBuilder() {
         return new Builder();
     }
 
@@ -84,7 +84,7 @@ public class TestEvaluation implements Evaluation {
         }
 
         @Override
-        public TestEvaluation build() {
+        public Evaluation build() {
             return new TestEvaluation(value);
         }
     }

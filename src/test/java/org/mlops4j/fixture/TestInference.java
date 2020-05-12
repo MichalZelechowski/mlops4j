@@ -22,7 +22,7 @@ import lombok.AllArgsConstructor;
 import org.mlops4j.api.Representation;
 import org.mlops4j.inference.api.Inferable;
 import org.mlops4j.inference.api.Inference;
-import org.mlops4j.storage.api.ComponentBuilder;
+import org.mlops4j.api.ComponentBuilder;
 import org.mlops4j.storage.api.Metadata;
 import org.mlops4j.storage.api.exception.DurabilityException;
 
@@ -45,7 +45,7 @@ public class TestInference implements Inference<TestDTO, TestDTO> {
     }
 
     @Override
-    public ComponentBuilder<Inference<TestDTO, TestDTO>> getBuilder() {
+    public ComponentBuilder<? super Inference<TestDTO, TestDTO>> getBuilder() {
         return new Builder();
     }
 

@@ -19,7 +19,7 @@ package org.mlops4j.experiment.api;
 
 import org.mlops4j.experiment.impl.SingleExperiment;
 import org.mlops4j.model.api.Model;
-import org.mlops4j.storage.api.ComponentBuilder;
+import org.mlops4j.api.ComponentBuilder;
 import org.mlops4j.storage.api.Durable;
 
 import java.util.concurrent.CompletableFuture;

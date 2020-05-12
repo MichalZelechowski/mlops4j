@@ -15,17 +15,30 @@
  *
  */
 
-package org.mlops4j.dataset.api;
+package org.mlops4j.featurestore.impl;
 
-import org.mlops4j.api.Representation;
-import org.mlops4j.storage.api.Durable;
+import com.google.common.collect.Maps;
+import org.mlops4j.dataset.api.DataSet;
+import org.mlops4j.dataset.api.DataSetId;
+import org.mlops4j.featurestore.api.FeatureStore;
+
+import java.util.Optional;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
 
-public interface DataSet<DATA> extends Durable<DataSet<DATA>> {
-    Representation<DATA> getRepresentation();
+public class InMemoryFeatureStore implements FeatureStore {
+    private final ConcurrentMap<DataSetId, DataSet<?>> content = Maps.newConcurrentMap();
 
-    DataSetId getId();
+    @Override
+    public Optional<DataSet<?>> get(DataSetId id) {
+        return Optional.ofNullable(content.get(id));
+    }
+
+    @Override
+    public void put(DataSet<?> dataset) {
+        this.content.put(dataset.getId(), dataset);
+    }
 }

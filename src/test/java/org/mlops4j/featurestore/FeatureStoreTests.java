@@ -15,17 +15,29 @@
  *
  */
 
-package org.mlops4j.dataset.api;
+package org.mlops4j.featurestore;
 
-import org.mlops4j.api.Representation;
-import org.mlops4j.storage.api.Durable;
+import org.junit.jupiter.api.Test;
+import org.mlops4j.dataset.api.DataSet;
+import org.mlops4j.dataset.api.DataSetId;
+import org.mlops4j.featurestore.api.FeatureStore;
+import org.mlops4j.featurestore.impl.FeatureStoreBuilder;
+import org.mockito.Mockito;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
 
-public interface DataSet<DATA> extends Durable<DataSet<DATA>> {
-    Representation<DATA> getRepresentation();
+public class FeatureStoreTests {
 
-    DataSetId getId();
+    @Test
+    public void addDataSet() {
+        FeatureStore store = new FeatureStoreBuilder().build();
+
+        DataSet<?> dataSet = Mockito.mock(DataSet.class);
+        Mockito.when(dataSet.getId()).thenReturn(new DataSetId("test", "v1", "2020"));
+        store.put(dataSet);
+
+
+    }
 }

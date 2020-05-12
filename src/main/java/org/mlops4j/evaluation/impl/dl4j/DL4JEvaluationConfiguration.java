@@ -23,7 +23,7 @@ import org.deeplearning4j.util.ModelSerializer;
 import org.mlops4j.api.Representation;
 import org.mlops4j.evaluation.api.EvaluationConfiguration;
 import org.mlops4j.model.impl.dl4j.DL4JModelConfiguration;
-import org.mlops4j.storage.api.ComponentBuilder;
+import org.mlops4j.api.ComponentBuilder;
 import org.mlops4j.storage.api.Metadata;
 import org.mlops4j.storage.api.exception.DurabilityException;
 
@@ -43,7 +43,7 @@ public abstract class DL4JEvaluationConfiguration implements EvaluationConfigura
         private NeuralNetwork network;
 
         @Override
-        public DL4JEvaluationConfiguration build() {
+        public EvaluationConfiguration build() {
             return new NeuralNetworkEvaluationConfiguration(network);
         }
 
@@ -60,7 +60,7 @@ public abstract class DL4JEvaluationConfiguration implements EvaluationConfigura
     }
 
     @Override
-    public ComponentBuilder<EvaluationConfiguration> getBuilder() {
+    public ComponentBuilder getBuilder() {
         return new Builder();
     }
 

@@ -21,7 +21,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.FileUtils;
-import org.mlops4j.storage.api.ComponentBuilder;
+import org.mlops4j.api.ComponentBuilder;
 import org.mlops4j.storage.api.KeyValueStorage;
 import org.mlops4j.storage.api.Metadata;
 import org.mlops4j.storage.api.exception.DurabilityException;
@@ -89,7 +89,7 @@ public class FileSystemKeyValueStorage implements KeyValueStorage {
     }
 
     @Override
-    public ComponentBuilder<KeyValueStorage> getBuilder() {
+    public ComponentBuilder<? super KeyValueStorage> getBuilder() {
         return new Builder();
     }
 
@@ -98,7 +98,7 @@ public class FileSystemKeyValueStorage implements KeyValueStorage {
         private Path root;
 
         @Override
-        public FileSystemKeyValueStorage build() {
+        public KeyValueStorage build() {
             Preconditions.checkNotNull(root, "Root path must be set");
             return new FileSystemKeyValueStorage(this.root);
         }

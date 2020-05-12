@@ -20,7 +20,7 @@ package org.mlops4j.storage;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import org.junit.jupiter.api.Test;
-import org.mlops4j.storage.api.ComponentBuilder;
+import org.mlops4j.api.ComponentBuilder;
 import org.mlops4j.storage.api.exception.DurabilityException;
 import org.mlops4j.storage.api.Durable;
 import org.mlops4j.storage.api.Metadata;
@@ -79,11 +79,11 @@ public class DurabilityTests {
 
         @Override
         public Metadata<ClassWithBinaryContent> getMetadata() throws DurabilityException {
-            return new Metadata<>(this.getBuilder()).withParameter("content", new ByteArrayInputStream(content));
+            return new Metadata(this.getBuilder()).withParameter("content", new ByteArrayInputStream(content));
         }
 
         @Override
-        public ComponentBuilder<ClassWithBinaryContent> getBuilder() {
+        public ComponentBuilder<? super ClassWithBinaryContent> getBuilder() {
             return new Builder();
         }
 
@@ -109,11 +109,11 @@ public class DurabilityTests {
 
         @Override
         public Metadata<ContainerClass> getMetadata() throws DurabilityException {
-            return new Metadata<>(this.getBuilder()).withParameter("nestedObject", nestedObject);
+            return new Metadata(this.getBuilder()).withParameter("nestedObject", nestedObject);
         }
 
         @Override
-        public ComponentBuilder<ContainerClass> getBuilder() {
+        public ComponentBuilder<? super ContainerClass> getBuilder() {
             return new Builder();
         }
 
@@ -148,7 +148,7 @@ public class DurabilityTests {
         }
 
         @Override
-        public ComponentBuilder getBuilder() {
+        public ComponentBuilder<? super SimpleClass> getBuilder() {
             return new Builder();
         }
 

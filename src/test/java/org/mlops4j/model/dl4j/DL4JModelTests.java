@@ -26,7 +26,9 @@ import org.mlops4j.api.ResultStatus;
 import org.mlops4j.dataset.api.DataSet;
 import org.mlops4j.dataset.api.DataSetId;
 import org.mlops4j.dataset.impl.dl4j.DL4JDataSet;
+import org.mlops4j.evaluation.api.EvaluationConfiguration;
 import org.mlops4j.evaluation.api.EvaluationResult;
+import org.mlops4j.evaluation.api.ModelEvaluator;
 import org.mlops4j.evaluation.impl.dl4j.DL4JEvaluationConfiguration;
 import org.mlops4j.evaluation.impl.dl4j.DL4JModelEvaluator;
 import org.mlops4j.inference.api.Input;
@@ -39,6 +41,7 @@ import org.mlops4j.model.impl.dl4j.DL4JModelConfiguration;
 import org.mlops4j.model.registry.api.ModelRegistry;
 import org.mlops4j.storage.api.exception.DurabilityException;
 import org.mlops4j.training.api.FitResult;
+import org.mlops4j.training.api.Trainer;
 import org.mlops4j.training.impl.dl4j.DL4JTrainer;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.factory.Nd4j;
@@ -81,11 +84,11 @@ public class DL4JModelTests {
                         .build())
                 .build();
 
-        DL4JTrainer trainer = new DL4JTrainer.Builder().epochs(1).build();
-        DL4JEvaluationConfiguration evaluationConfiguration = new DL4JEvaluationConfiguration.Builder()
+        Trainer trainer = new DL4JTrainer.Builder().epochs(1).build();
+        EvaluationConfiguration evaluationConfiguration = new DL4JEvaluationConfiguration.Builder()
                 .modelConfiguration(modelConfiguration)
                 .build();
-        DL4JModelEvaluator evaluator = new DL4JModelEvaluator.Builder()
+        ModelEvaluator evaluator = new DL4JModelEvaluator.Builder()
                 .neuralNetwork(DL4JModelEvaluator.EvaluationType.BASE)
                 .build();
         DL4JInference inference = new DL4JInference.Builder().single().build();
@@ -101,24 +104,26 @@ public class DL4JModelTests {
                 .version("1.0")
                 .build();
 
-        DataSet trainSet = DL4JDataSet.from(new DataSetId("test", "1", "20200105"),
-                new org.nd4j.linalg.dataset.DataSet(
+        DataSet trainSet = new DL4JDataSet.Builder()
+                .id(new DataSetId("test", "1", "20200105"))
+                .set(new org.nd4j.linalg.dataset.DataSet(
                         Nd4j.create(new float[]{1.0f, 0.0f, 0.0f, 1.0f}, 1, 4),
-                        Nd4j.create(new float[]{1.0f, 0.0f}, 1, 2)
-                ));
+                        Nd4j.create(new float[]{1.0f, 0.0f}, 1, 2)))
+                .build();
 
         Future<FitResult> trainFuture = model.fit(trainSet);
 
         FitResult fitResult = trainFuture.get(10, TimeUnit.SECONDS);
         assertThat(fitResult.getStatus())
-                .describedAs(fitResult.getMessage().toString()+ ' ' + fitResult.getException())
+                .describedAs(fitResult.getMessage().toString() + ' ' + fitResult.getException())
                 .isEqualTo(ResultStatus.SUCCESS);
 
-        DataSet evalSet = DL4JDataSet.from(new DataSetId("eval", "1", "20200105"),
-                new org.nd4j.linalg.dataset.DataSet(
+        DataSet evalSet = new DL4JDataSet.Builder()
+                .id(new DataSetId("eval", "1", "20200105"))
+                .set(new org.nd4j.linalg.dataset.DataSet(
                         Nd4j.create(new float[]{1.0f, 0.0f, 0.0f, 1.0f}, 1, 4),
-                        Nd4j.create(new float[]{1.0f, 0.0f}, 1, 2))
-        );
+                        Nd4j.create(new float[]{1.0f, 0.0f}, 1, 2)))
+                .build();
 
         Future<EvaluationResult> evaluationFuture = model.evaluate(evalSet);
         EvaluationResult evaluationResult = evaluationFuture.get(10, TimeUnit.SECONDS);

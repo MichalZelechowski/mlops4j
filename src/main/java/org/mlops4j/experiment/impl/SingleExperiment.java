@@ -21,7 +21,7 @@ import org.mlops4j.evaluation.api.EvaluationResult;
 import org.mlops4j.experiment.api.Experiment;
 import org.mlops4j.experiment.api.ExperimentResult;
 import org.mlops4j.model.api.Model;
-import org.mlops4j.storage.api.ComponentBuilder;
+import org.mlops4j.api.ComponentBuilder;
 import org.mlops4j.storage.api.Metadata;
 import org.mlops4j.storage.api.exception.DurabilityException;
 import org.mlops4j.training.api.FitResult;
@@ -46,7 +46,7 @@ public class SingleExperiment implements Experiment {
     }
 
     @Override
-    public ComponentBuilder<Experiment> getBuilder() {
+    public ComponentBuilder<? super Experiment> getBuilder() {
         return new Builder();
     }
 

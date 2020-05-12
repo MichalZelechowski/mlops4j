@@ -24,7 +24,7 @@ import org.mlops4j.api.exception.StreamException;
 import org.mlops4j.model.api.Model;
 import org.mlops4j.model.api.ModelId;
 import org.mlops4j.model.registry.api.ModelRegistry;
-import org.mlops4j.storage.api.ComponentBuilder;
+import org.mlops4j.api.ComponentBuilder;
 import org.mlops4j.storage.api.KeyValueStorage;
 import org.mlops4j.storage.api.Metadata;
 import org.mlops4j.storage.api.exception.DurabilityException;
@@ -120,7 +120,7 @@ public class KeyValueModelRegistry implements ModelRegistry {
     }
 
     @Override
-    public ComponentBuilder<ModelRegistry> getBuilder() {
+    public ComponentBuilder<? super ModelRegistry> getBuilder() {
         return new Builder();
     }
 

@@ -20,7 +20,7 @@ package org.mlops4j.model.registry.api;
 import org.mlops4j.model.api.Model;
 import org.mlops4j.model.api.ModelId;
 import org.mlops4j.model.registry.impl.KeyValueModelRegistry;
-import org.mlops4j.storage.api.ComponentBuilder;
+import org.mlops4j.api.ComponentBuilder;
 import org.mlops4j.storage.api.Durable;
 import org.mlops4j.storage.api.exception.DurabilityException;
 import org.mlops4j.storage.impl.InMemoryKeyValueStorage;

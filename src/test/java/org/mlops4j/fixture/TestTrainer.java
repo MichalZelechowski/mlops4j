@@ -21,7 +21,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.mlops4j.api.Representation;
 import org.mlops4j.dataset.api.DataSet;
-import org.mlops4j.storage.api.ComponentBuilder;
+import org.mlops4j.api.ComponentBuilder;
 import org.mlops4j.storage.api.Metadata;
 import org.mlops4j.storage.api.exception.DurabilityException;
 import org.mlops4j.training.api.FitResult;
@@ -55,7 +55,7 @@ public class TestTrainer implements Trainer {
     }
 
     @Override
-    public ComponentBuilder<Trainer> getBuilder() {
+    public ComponentBuilder<? super Trainer> getBuilder() {
         return new Builder();
     }
 

@@ -15,38 +15,32 @@
  *
  */
 
-package org.mlops4j.fixture;
+package org.mlops4j.dataset.impl.dl4j;
 
-import org.mlops4j.api.Representation;
-import org.mlops4j.evaluation.api.EvaluationConfiguration;
-import org.mlops4j.api.ComponentBuilder;
+import org.datavec.api.records.reader.impl.csv.CSVRecordReader;
+import org.mlops4j.dataset.api.DataSet;
+import org.mlops4j.dataset.api.DataSetId;
 import org.mlops4j.storage.api.Metadata;
 import org.mlops4j.storage.api.exception.DurabilityException;
+import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-public class TestEvaluationConfiguration implements EvaluationConfiguration {
 
-    @Override
-    public Representation getEvaluationRepresentation() {
-        return Representation.of(new ThirdPartyEvaluation());
+public class CSVDataSet extends DL4JIteratorDataSet {
+    private final int batchSize;
+    private final String fileName;
+
+    protected CSVDataSet(DataSetId id, CSVRecordReader reader, int batchSize, String fileName) {
+        super(id, reader, batchSize);
+        this.batchSize = batchSize;
+        this.fileName = fileName;
     }
 
     @Override
-    public Metadata getMetadata() throws DurabilityException {
-        return new Metadata(this);
-    }
-
-    @Override
-    public ComponentBuilder getBuilder() {
-        return new Builder();
-    }
-
-    public static class Builder implements ComponentBuilder<EvaluationConfiguration> {
-
-        public EvaluationConfiguration build() {
-            return new TestEvaluationConfiguration();
-        }
+    public Metadata<DataSet<DataSetIterator>> getMetadata() throws DurabilityException {
+        return super.getMetadata()
+                .withParameter("csv", fileName);
     }
 }

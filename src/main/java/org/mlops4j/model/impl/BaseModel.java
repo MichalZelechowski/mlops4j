@@ -36,7 +36,7 @@ import org.mlops4j.model.api.Model;
 import org.mlops4j.model.api.ModelConfiguration;
 import org.mlops4j.model.api.ModelId;
 import org.mlops4j.model.registry.api.ModelRegistry;
-import org.mlops4j.storage.api.ComponentBuilder;
+import org.mlops4j.api.ComponentBuilder;
 import org.mlops4j.storage.api.Metadata;
 import org.mlops4j.storage.api.exception.DurabilityException;
 import org.mlops4j.training.api.FitResult;
@@ -169,7 +169,7 @@ public class BaseModel implements Model {
     }
 
     @Override
-    public ComponentBuilder getBuilder() {
+    public ComponentBuilder<? super Model> getBuilder() {
         return new Builder();
     }
 
