@@ -107,7 +107,8 @@ public class SingleExperiment implements Experiment {
 
     @Override
     public ExperimentId getId() {
-        return new ExperimentId(model.getId(), trainDataSet.getId(), evalDataSet.getId());
+        return new ExperimentId(model.getId().getName(), model.getId().getVersion(),
+                trainDataSet.getId(), evalDataSet.getId());
     }
 
     private void start() throws DurabilityException {
@@ -147,5 +148,10 @@ public class SingleExperiment implements Experiment {
         } else {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public Model getModel() {
+        return this.model;
     }
 }

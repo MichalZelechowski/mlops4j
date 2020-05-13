@@ -17,8 +17,11 @@
 
 package org.mlops4j.experiment.api;
 
+import org.mlops4j.model.api.Model;
 import org.mlops4j.storage.api.Durable;
 
+import java.time.Duration;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -31,4 +34,7 @@ public interface Experiment extends Durable<Experiment> {
 
     ExperimentId getId();
 
+    Optional<Duration> getDuration();
+
+    Model getModel();
 }

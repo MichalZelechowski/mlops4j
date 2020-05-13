@@ -19,7 +19,6 @@ package org.mlops4j.experiment.api;
 
 import lombok.*;
 import org.mlops4j.dataset.api.DataSetId;
-import org.mlops4j.model.api.ModelId;
 import org.mlops4j.storage.api.Storable;
 import org.nd4j.shade.protobuf.common.primitives.Bytes;
 
@@ -35,13 +34,14 @@ import java.util.Arrays;
 @Getter
 @ToString
 public class ExperimentId implements Storable {
-    private ModelId modelId;
+    private String name;
+    private String version;
     private DataSetId trainSetId;
     private DataSetId evalSetId;
 
     @Override
     public byte[] asBytes() {
-        byte[] modelIdBytes = this.modelId.asBytes();
+        byte[] modelIdBytes = (name + "/" + version).getBytes();
         byte[] trainSetIdBytes = this.trainSetId.asBytes();
         byte[] evalSetIdBytes = this.evalSetId.asBytes();
         byte[] zero = new byte[]{0};
@@ -62,8 +62,8 @@ public class ExperimentId implements Storable {
         byte[] trainSetIdBytes = Arrays.copyOfRange(bytes, indexes[1] + 1, indexes[2]);
         byte[] evalSetIdBytes = Arrays.copyOfRange(bytes, indexes[2] + 1, bytes.length);
 
-        this.modelId = new ModelId();
-        this.modelId.fromBytes(modelIdBytes);
+        this.name = new String(modelIdBytes).split("/")[0];
+        this.version = new String(modelIdBytes).split("/")[1];
         this.trainSetId = new DataSetId();
         this.trainSetId.fromBytes(trainSetIdBytes);
         this.evalSetId = new DataSetId();

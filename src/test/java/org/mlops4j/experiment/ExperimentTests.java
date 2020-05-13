@@ -52,7 +52,36 @@ public class ExperimentTests {
     @Test
     public void experimentIsRun() throws InterruptedException, ExecutionException, TimeoutException, DurabilityException {
         ModelRegistry registry = new ModelRegistry.Builder().build();
+        ExperimentRepository experimentRepository = new ExperimentRepositoryBuilder().build();
 
+        Experiment experiment = createExperiment(registry, experimentRepository);
+
+        CompletableFuture<ExperimentResult> resultFuture = experiment.run();
+
+        ExperimentResult result = resultFuture.get(10, TimeUnit.SECONDS);
+        assertThat(result.getStatus()).isEqualTo(ResultStatus.SUCCESS);
+        assertThat(experiment.getDuration()).isPresent();
+        assertThat(registry.get(experiment.getModel().getId())).isPresent();
+        assertThat(registry.get(experiment.getModel().getId()).get().getEvaluations()).isNotEmpty();
+        assertThat(experiment.getModel().getId().getIteration()).isEqualTo(1);
+    }
+
+    @Test
+    public void experimentIsContinued() throws InterruptedException, ExecutionException, TimeoutException, DurabilityException {
+        ModelRegistry registry = new ModelRegistry.Builder().build();
+        ExperimentRepository experimentRepository = new ExperimentRepositoryBuilder().build();
+
+        Experiment experiment = createExperiment(registry, experimentRepository);
+
+        CompletableFuture<ExperimentResult> resultFuture = experiment.run().thenCompose(r -> experiment.run());
+
+        ExperimentResult result = resultFuture.get(10, TimeUnit.SECONDS);
+        assertThat(result.getStatus()).isEqualTo(ResultStatus.SUCCESS);
+        assertThat(registry.get(experiment.getModel().getId())).isPresent();
+        assertThat(experiment.getModel().getId().getIteration()).isEqualTo(2);
+    }
+
+    private Experiment createExperiment(ModelRegistry registry, ExperimentRepository experimentRepository) {
         ModelConfiguration modelConfiguration = new TestModelConfiguration.Builder().build();
         ModelEvaluator evaluator = new TestModelEvaluator.Builder().build();
         Inference inference = new TestInference.Builder().build();
@@ -73,21 +102,13 @@ public class ExperimentTests {
         DataSet trainSet = new TestDataSet.Builder().build();
         DataSet evalSet = new TestDataSet.Builder().build();
 
-        ExperimentRepository experimentRepository = new ExperimentRepositoryBuilder().build();
-        Experiment experiment = new ExperimentBuilder()
+        return new ExperimentBuilder()
                 .model(model)
                 .trainDataSet(trainSet)
                 .evalDataSet(evalSet)
                 .repository(experimentRepository)
                 .modelRegistry(registry)
                 .build();
-
-        CompletableFuture<ExperimentResult> resultFuture = experiment.run();
-
-        ExperimentResult result = resultFuture.get(10, TimeUnit.SECONDS);
-        assertThat(result.getStatus()).isEqualTo(ResultStatus.SUCCESS);
-
-        assertThat(registry.get(model.getId())).isPresent();
-        assertThat(registry.get(model.getId()).get().getEvaluations()).isNotEmpty();
     }
+
 }
