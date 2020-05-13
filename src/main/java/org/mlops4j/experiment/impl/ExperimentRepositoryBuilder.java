@@ -15,20 +15,27 @@
  *
  */
 
-package org.mlops4j.experiment.api;
+package org.mlops4j.experiment.impl;
 
-import org.mlops4j.storage.api.Durable;
-
-import java.util.concurrent.CompletableFuture;
+import org.mlops4j.api.ComponentBuilder;
+import org.mlops4j.experiment.api.ExperimentRepository;
+import org.mlops4j.storage.api.KeyValueStorage;
+import org.mlops4j.storage.impl.InMemoryKeyValueStorage;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
 
-public interface Experiment extends Durable<Experiment> {
+public class ExperimentRepositoryBuilder implements ComponentBuilder<ExperimentRepository> {
+    private KeyValueStorage keyValueStorage = new InMemoryKeyValueStorage.Builder().build();
 
-    CompletableFuture<ExperimentResult> run();
+    @Override
+    public ExperimentRepository build() {
+        return new KeyValueExperimentRepository(keyValueStorage);
+    }
 
-    ExperimentId getId();
-
+    public ExperimentRepositoryBuilder storage(KeyValueStorage storage) {
+        this.keyValueStorage = storage;
+        return this;
+    }
 }

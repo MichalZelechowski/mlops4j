@@ -18,17 +18,12 @@
 package org.mlops4j.experiment.api;
 
 import org.mlops4j.storage.api.Durable;
-
-import java.util.concurrent.CompletableFuture;
+import org.mlops4j.storage.api.exception.DurabilityException;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
 
-public interface Experiment extends Durable<Experiment> {
-
-    CompletableFuture<ExperimentResult> run();
-
-    ExperimentId getId();
-
+public interface ExperimentRepository extends Durable<ExperimentRepository> {
+    void put(Experiment experiment) throws DurabilityException;
 }

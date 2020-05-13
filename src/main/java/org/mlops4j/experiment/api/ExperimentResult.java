@@ -17,6 +17,7 @@
 
 package org.mlops4j.experiment.api;
 
+import lombok.ToString;
 import org.mlops4j.api.Result;
 import org.mlops4j.api.ResultStatus;
 import org.mlops4j.evaluation.api.EvaluationResult;
@@ -25,7 +26,7 @@ import org.mlops4j.training.api.FitResult;
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-
+@ToString
 public class ExperimentResult extends Result {
     private final FitResult fitResult;
     private final EvaluationResult evaluationResult;
@@ -34,6 +35,18 @@ public class ExperimentResult extends Result {
         super(ResultStatus.combined(fitResult.getStatus(), evaluationResult.getStatus()), null, null);
         this.fitResult = fitResult;
         this.evaluationResult = evaluationResult;
+    }
+
+    public ExperimentResult(ExperimentResult result, String message, Exception exception) {
+        super(result.getStatus(), message, exception);
+        this.fitResult = result.fitResult;
+        this.evaluationResult = result.evaluationResult;
+    }
+
+    public ExperimentResult(Exception exception) {
+        super(ResultStatus.FAILURE, "Cannot start experiment", exception);
+        this.fitResult = null;
+        this.evaluationResult = null;
     }
 
 }

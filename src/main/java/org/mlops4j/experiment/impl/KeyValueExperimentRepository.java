@@ -15,38 +15,38 @@
  *
  */
 
-package org.mlops4j.fixture;
+package org.mlops4j.experiment.impl;
 
-import org.mlops4j.api.Representation;
-import org.mlops4j.evaluation.api.EvaluationConfiguration;
+import lombok.AllArgsConstructor;
 import org.mlops4j.api.ComponentBuilder;
+import org.mlops4j.experiment.api.Experiment;
+import org.mlops4j.experiment.api.ExperimentRepository;
+import org.mlops4j.storage.api.KeyValueStorage;
 import org.mlops4j.storage.api.Metadata;
 import org.mlops4j.storage.api.exception.DurabilityException;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-public class TestEvaluationConfiguration implements EvaluationConfiguration {
+@AllArgsConstructor
+public class KeyValueExperimentRepository implements ExperimentRepository {
+
+    private final KeyValueStorage storage;
 
     @Override
-    public Representation getEvaluationRepresentation() {
-        return Representation.of(new ThirdPartyEvaluation());
+    public Metadata<ExperimentRepository> getMetadata() throws DurabilityException {
+        return new Metadata<>(this).withParameter("storage", storage);
     }
 
     @Override
-    public Metadata getMetadata() throws DurabilityException {
-        return new Metadata(this);
+    public ComponentBuilder<? super ExperimentRepository> getBuilder() {
+        return new ExperimentRepositoryBuilder();
     }
 
     @Override
-    public ComponentBuilder getBuilder() {
-        return new Builder();
-    }
-
-    public static class Builder implements ComponentBuilder<TestEvaluationConfiguration> {
-
-        public TestEvaluationConfiguration build() {
-            return new TestEvaluationConfiguration();
-        }
+    public void put(Experiment experiment) throws DurabilityException {
+        final String key = new String(experiment.getId().asBytes());
+        final Metadata<Experiment> metadata = experiment.getMetadata();
+        this.storage.put(key, metadata.asBytes());
     }
 }
