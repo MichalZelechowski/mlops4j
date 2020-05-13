@@ -23,7 +23,7 @@ import org.mlops4j.dataset.api.DataSet;
 import org.mlops4j.evaluation.api.EvaluationConfiguration;
 import org.mlops4j.evaluation.api.ModelEvaluator;
 import org.mlops4j.experiment.api.Experiment;
-import org.mlops4j.experiment.api.ExperimentBuilder;
+import org.mlops4j.experiment.impl.ExperimentBuilder;
 import org.mlops4j.experiment.api.ExperimentRepository;
 import org.mlops4j.experiment.api.ExperimentResult;
 import org.mlops4j.experiment.impl.ExperimentRepositoryBuilder;
@@ -33,6 +33,7 @@ import org.mlops4j.model.api.Model;
 import org.mlops4j.model.api.ModelConfiguration;
 import org.mlops4j.model.impl.BaseModel;
 import org.mlops4j.model.registry.api.ModelRegistry;
+import org.mlops4j.model.registry.impl.ModelRegistryBuilder;
 import org.mlops4j.storage.api.exception.DurabilityException;
 import org.mlops4j.training.api.Trainer;
 
@@ -51,7 +52,7 @@ public class ExperimentTests {
 
     @Test
     public void experimentIsRun() throws InterruptedException, ExecutionException, TimeoutException, DurabilityException {
-        ModelRegistry registry = new ModelRegistry.Builder().build();
+        ModelRegistry registry = new ModelRegistryBuilder().build();
         ExperimentRepository experimentRepository = new ExperimentRepositoryBuilder().build();
 
         Experiment experiment = createExperiment(registry, experimentRepository);
@@ -68,7 +69,7 @@ public class ExperimentTests {
 
     @Test
     public void experimentIsContinued() throws InterruptedException, ExecutionException, TimeoutException, DurabilityException {
-        ModelRegistry registry = new ModelRegistry.Builder().build();
+        ModelRegistry registry = new ModelRegistryBuilder().build();
         ExperimentRepository experimentRepository = new ExperimentRepositoryBuilder().build();
 
         Experiment experiment = createExperiment(registry, experimentRepository);

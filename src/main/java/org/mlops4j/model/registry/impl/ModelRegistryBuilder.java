@@ -15,27 +15,19 @@
  *
  */
 
-package org.mlops4j.featurestore;
+package org.mlops4j.model.registry.impl;
 
-import org.junit.jupiter.api.Test;
-import org.mlops4j.dataset.api.DataSet;
-import org.mlops4j.dataset.api.DataSetId;
-import org.mlops4j.featurestore.api.FeatureStore;
-import org.mlops4j.featurestore.impl.FeatureStoreBuilder;
-import org.mockito.Mockito;
+import org.mlops4j.api.ComponentBuilder;
+import org.mlops4j.model.registry.api.ModelRegistry;
+import org.mlops4j.storage.impl.InMemoryKeyValueStorage;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
-
-public class FeatureStoreTests {
-
-    @Test
-    public void addDataSet() {
-        FeatureStore store = new FeatureStoreBuilder().build();
-
-        DataSet<?> dataSet = Mockito.mock(DataSet.class);
-        Mockito.when(dataSet.getId()).thenReturn(new DataSetId("test", "v1", "2020"));
-        store.put(dataSet);
+public
+class ModelRegistryBuilder implements ComponentBuilder<ModelRegistry> {
+    public ModelRegistry build() {
+        // TODO options to build different types of storages
+        return new KeyValueModelRegistry(new InMemoryKeyValueStorage.Builder().build());
     }
 }

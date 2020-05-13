@@ -39,10 +39,4 @@ public interface ModelRegistry extends Durable<ModelRegistry> {
 
     Iterator<ModelId> list() throws DurabilityException;
 
-    class Builder implements ComponentBuilder<ModelRegistry> {
-        public ModelRegistry build() {
-            // TODO options to build different types of storages
-            return new KeyValueModelRegistry(new InMemoryKeyValueStorage.Builder().build());
-        }
-    }
 }

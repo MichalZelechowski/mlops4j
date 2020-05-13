@@ -124,7 +124,7 @@ public class KeyValueModelRegistry implements ModelRegistry {
         return new Builder();
     }
 
-    public static class Builder extends ModelRegistry.Builder {
+    public static class Builder extends ModelRegistryBuilder {
         private KeyValueStorage storage;
 
         @Override

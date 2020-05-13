@@ -39,6 +39,7 @@ import org.mlops4j.model.api.Model;
 import org.mlops4j.model.impl.BaseModel;
 import org.mlops4j.model.impl.dl4j.DL4JModelConfiguration;
 import org.mlops4j.model.registry.api.ModelRegistry;
+import org.mlops4j.model.registry.impl.ModelRegistryBuilder;
 import org.mlops4j.storage.api.exception.DurabilityException;
 import org.mlops4j.training.api.FitResult;
 import org.mlops4j.training.api.Trainer;
@@ -63,7 +64,7 @@ public class DL4JModelTests {
 
     @Test
     public void modelTrainEvaluateAndPredict() throws ExecutionException, InterruptedException, DurabilityException, TimeoutException {
-        ModelRegistry registry = new ModelRegistry.Builder().build();
+        ModelRegistry registry = new ModelRegistryBuilder().build();
         DL4JModelConfiguration modelConfiguration = new DL4JModelConfiguration.Builder()
                 .configuration(new NeuralNetConfiguration.Builder()
                         .updater(new Adam())

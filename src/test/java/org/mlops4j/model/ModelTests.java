@@ -32,6 +32,7 @@ import org.mlops4j.model.api.ModelConfiguration;
 import org.mlops4j.model.api.ModelId;
 import org.mlops4j.model.impl.BaseModel;
 import org.mlops4j.model.registry.api.ModelRegistry;
+import org.mlops4j.model.registry.impl.ModelRegistryBuilder;
 import org.mlops4j.storage.api.exception.DurabilityException;
 import org.mlops4j.training.api.FitResult;
 import org.mlops4j.training.api.Trainer;
@@ -51,7 +52,7 @@ public class ModelTests {
 
     @Test
     public void modelTrainEvaluateAndPredict() throws ExecutionException, InterruptedException, DurabilityException {
-        ModelRegistry registry = new ModelRegistry.Builder().build();
+        ModelRegistry registry = new ModelRegistryBuilder().build();
 
         Model model = getModel(registry);
 
@@ -109,7 +110,7 @@ public class ModelTests {
 
     @Test
     public void modelTrainingReiterate() throws ExecutionException, InterruptedException, DurabilityException {
-        ModelRegistry registry = new ModelRegistry.Builder().build();
+        ModelRegistry registry = new ModelRegistryBuilder().build();
 
         Model model = getModel(registry);
 

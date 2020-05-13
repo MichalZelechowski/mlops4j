@@ -15,12 +15,13 @@
  *
  */
 
-package org.mlops4j.experiment.api;
+package org.mlops4j.experiment.impl;
 
 import com.google.common.base.Preconditions;
 import org.mlops4j.api.ComponentBuilder;
 import org.mlops4j.dataset.api.DataSet;
-import org.mlops4j.experiment.impl.SingleExperiment;
+import org.mlops4j.experiment.api.Experiment;
+import org.mlops4j.experiment.api.ExperimentRepository;
 import org.mlops4j.model.api.Model;
 import org.mlops4j.model.api.ModelId;
 import org.mlops4j.model.registry.api.ModelRegistry;
