@@ -37,4 +37,9 @@ public class SingleMetricValue implements MetricValue<Double> {
     public Double getValue() {
         return this.value;
     }
+
+    @Override
+    public int compareTo(MetricValue<Double> o) {
+        return value.compareTo(o.getValue());
+    }
 }

@@ -26,7 +26,9 @@ import org.mlops4j.api.ComponentBuilder;
 import org.mlops4j.storage.api.Metadata;
 import org.mlops4j.storage.api.exception.DurabilityException;
 
+import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
@@ -47,6 +49,11 @@ public class TestEvaluation implements Evaluation {
     @Override
     public Optional<Metric> getMetric(String name) {
         return Optional.of(name).filter(n -> "testMetric".equals(n)).map(x -> getMetrics()[0]);
+    }
+
+    @Override
+    public Set<String> getMetricNames() {
+        return Collections.singleton("testMetric");
     }
 
     @Override

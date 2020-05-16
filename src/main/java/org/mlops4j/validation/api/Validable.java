@@ -15,25 +15,19 @@
  *
  */
 
-package org.mlops4j.evaluation.api;
+package org.mlops4j.validation.api;
 
-import org.mlops4j.dataset.api.DataSetId;
-import org.mlops4j.storage.api.Durable;
+import org.mlops4j.evaluation.api.Evaluation;
 
-import java.util.Optional;
-import java.util.Set;
+import java.util.Iterator;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
 
-public interface Evaluation extends Comparable<Evaluation>, Durable<Evaluation> {
+public interface Validable<I> {
 
-    Metric[] getMetrics();
+    Iterator<Evaluation> getEvaluations();
 
-    Optional<Metric> getMetric(String name);
-
-    Set<String> getMetricNames();
-
-    DataSetId getDataSetId();
+    I getId();
 }

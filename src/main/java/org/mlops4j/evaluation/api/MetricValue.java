@@ -21,6 +21,6 @@ package org.mlops4j.evaluation.api;
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
 
-public interface MetricValue<VALUE> {
+public interface MetricValue<VALUE> extends Comparable<MetricValue<VALUE>> {
     VALUE getValue();
 }

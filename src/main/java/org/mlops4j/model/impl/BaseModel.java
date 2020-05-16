@@ -184,7 +184,7 @@ public class BaseModel implements Model {
         private ModelRegistry registry;
         private ModelId parent;
         private ModelId id;
-        private final Collection<Evaluation> evaluations = Lists.newLinkedList();
+        private final Collection<Evaluation> validables = Lists.newLinkedList();
 
         public Builder configuration(ModelConfiguration configuration) {
             this.configuration = configuration;
@@ -237,9 +237,9 @@ public class BaseModel implements Model {
             return modelId;
         }
 
-        public Builder evaluations(Collection<Evaluation> evaluations) {
-            this.evaluations.clear();
-            this.evaluations.addAll(evaluations);
+        public Builder evaluations(Collection<Evaluation> validables) {
+            this.validables.clear();
+            this.validables.addAll(validables);
             return this;
         }
 
@@ -259,7 +259,7 @@ public class BaseModel implements Model {
             }
 
             return new BaseModel(configuration, evaluationConfiguration, evaluator, inference, trainer, modelId, parent,
-                    this.registry, this.evaluations);
+                    this.registry, this.validables);
         }
 
         private void isSetOrThrow(Object property, String name) {

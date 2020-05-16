@@ -29,7 +29,12 @@ import lombok.ToString;
 @RequiredArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class Metric {
+public class Metric<V> implements Comparable<Metric<V>> {
     private final String name;
-    private final MetricValue value;
+    private final MetricValue<V> value;
+
+    @Override
+    public int compareTo(Metric<V> o) {
+        return this.value.compareTo(o.getValue());
+    }
 }

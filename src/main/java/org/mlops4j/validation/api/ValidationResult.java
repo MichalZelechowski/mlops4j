@@ -15,25 +15,26 @@
  *
  */
 
-package org.mlops4j.evaluation.api;
+package org.mlops4j.validation.api;
 
-import org.mlops4j.dataset.api.DataSetId;
-import org.mlops4j.storage.api.Durable;
-
-import java.util.Optional;
-import java.util.Set;
+import lombok.Getter;
+import lombok.ToString;
+import org.mlops4j.api.Result;
+import org.mlops4j.api.ResultStatus;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
+@ToString
+@Getter
+public class ValidationResult<ID> extends Result {
 
-public interface Evaluation extends Comparable<Evaluation>, Durable<Evaluation> {
+    private final ID selectedId;
 
-    Metric[] getMetrics();
+    public ValidationResult(ResultStatus status, String message, Exception exception, ID selectedId) {
+        super(status, message, exception);
+        this.selectedId = selectedId;
+    }
 
-    Optional<Metric> getMetric(String name);
 
-    Set<String> getMetricNames();
-
-    DataSetId getDataSetId();
 }

@@ -18,21 +18,32 @@
 package org.mlops4j.evaluation.impl.dl4j;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.tuple.Pair;
+import org.mlops4j.api.ComponentBuilder;
 import org.mlops4j.dataset.api.DataSetId;
 import org.mlops4j.evaluation.api.Evaluation;
 import org.mlops4j.evaluation.api.Metric;
-import org.mlops4j.api.ComponentBuilder;
+import org.mlops4j.evaluation.api.SingleMetricValue;
 import org.mlops4j.storage.api.Metadata;
 import org.mlops4j.storage.api.exception.DurabilityException;
 import org.nd4j.evaluation.IEvaluation;
+import org.nd4j.evaluation.IMetric;
+import org.nd4j.evaluation.classification.ROC;
+import org.nd4j.evaluation.classification.ROCBinary;
+import org.nd4j.evaluation.classification.ROCMultiClass;
 import org.nd4j.serde.json.JsonMappers;
 import org.nd4j.shade.jackson.core.JsonProcessingException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
@@ -119,17 +130,56 @@ public abstract class DL4JEvaluation implements Evaluation {
 
         @Override
         public Metric[] getMetrics() {
-            return new Metric[0];
+            List<Pair<? extends IMetric, String>> iMetrics;
+            if (this.value instanceof org.nd4j.evaluation.classification.Evaluation) {
+                org.nd4j.evaluation.classification.Evaluation.Metric[] values = org.nd4j.evaluation.classification.Evaluation.Metric.values();
+                iMetrics = Lists.transform(Lists.newArrayList(values), m -> Pair.of(m, m.name()));
+            } else if (this.value instanceof ROC) {
+                iMetrics = Lists.transform(Lists.newArrayList(ROC.Metric.values()), m -> Pair.of(m, m.name()));
+            } else if (this.value instanceof ROCBinary) {
+                iMetrics = Lists.transform(Lists.newArrayList(ROCBinary.Metric.values()), m -> Pair.of(m, m.name()));
+            } else if (this.value instanceof ROCMultiClass) {
+                iMetrics = Lists.transform(Lists.newArrayList(ROCMultiClass.Metric.values()), m -> Pair.of(m, m.name()));
+            } else {
+                throw new IllegalArgumentException(String.format("Does not support evaluation of type %s", value.getClass()));
+            }
+            return iMetrics.stream()
+                    .map(iMetric -> new Metric<>(
+                            iMetric.getValue().toLowerCase(),
+                            new SingleMetricValue(this.value.getValue(iMetric.getKey()))))
+                    .toArray(Metric[]::new);
         }
 
         @Override
         public Optional<Metric> getMetric(String name) {
-            return Optional.empty();
+            // TODO should optimize lookup
+            return Stream.of(this.getMetrics()).filter(m -> m.getName().equals(name)).findAny();
+        }
+
+        @Override
+        public Set<String> getMetricNames() {
+            // TODO should optimize lookup
+            return Stream.of(this.getMetrics()).map(Metric::getName).collect(Collectors.toSet());
         }
 
         @Override
         public int compareTo(Evaluation o) {
             //TODO figure out real comparision, probably with injectable comparator
+            //naive comparation will only check if all metrics exposed are strongly different, which may be inaccurate
+            //in many cases (f.e. precision vs accuracy)
+            List<Integer> comparisons = Lists.newLinkedList();
+            for (Metric m : this.getMetrics()) {
+                Optional<Metric> correspondingMetric = o.getMetric(m.getName());
+                if (correspondingMetric.isPresent()) {
+                    comparisons.add(correspondingMetric.map(cm -> m.compareTo(cm)).get());
+                }
+            }
+            if (comparisons.stream().allMatch(i -> i > 0)) {
+                return 1;
+            }
+            if (comparisons.stream().allMatch(i -> i < 0)) {
+                return -1;
+            }
             return 0;
         }
 
