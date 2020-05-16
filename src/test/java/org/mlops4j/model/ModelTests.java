@@ -132,4 +132,9 @@ public class ModelTests {
         assertThat(modelIds[1].getIteration().equals(20));
     }
 
+    @Test
+    public void modelTestInferenceReplacement() {
+
+    }
+
 }

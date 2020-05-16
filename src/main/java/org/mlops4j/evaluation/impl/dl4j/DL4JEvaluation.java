@@ -185,15 +185,12 @@ public abstract class DL4JEvaluation implements Evaluation {
 
         @Override
         public Metadata<Evaluation> getMetadata() throws DurabilityException {
-            try {
-                byte[] bytes = JsonMappers.getMapper().writeValueAsBytes(value);
-                return new Metadata<>(this)
-                        .withParameter("value", bytes)
-                        .withParameter("type", value.getClass().getName())
-                        .withParameter("dataSetId", new String(dataSetId.asBytes()));
-            } catch (JsonProcessingException e) {
-                throw new DurabilityException(String.format("Cannot convert %s to bytes", value));
-            }
+            // there's trust that value can be always deserialized - maybe Metric should be stored only?
+            byte[] bytes = value.toJson().getBytes();
+            return new Metadata<>(this)
+                    .withParameter("value", bytes)
+                    .withParameter("type", value.getClass().getName())
+                    .withParameter("dataSetId", new String(dataSetId.asBytes()));
         }
     }
 }

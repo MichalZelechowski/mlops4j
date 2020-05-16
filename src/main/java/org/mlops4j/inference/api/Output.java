@@ -24,7 +24,11 @@ package org.mlops4j.inference.api;
 public interface Output<VALUE> {
     VALUE getValue();
 
-    static Output<Integer> from(Integer integer) {
-        return new LabelIndex(integer);
+    static Output<Integer> from(Integer index) {
+        return new LabelIndex(index);
+    }
+
+    static Output<Integer[]> from(Integer[] indexes) {
+        return new LabeledIndexes(indexes);
     }
 }

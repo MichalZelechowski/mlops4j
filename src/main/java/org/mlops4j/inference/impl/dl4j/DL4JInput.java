@@ -51,6 +51,7 @@ public abstract class DL4JInput<I> implements Input<I> {
             return this.value;
         }
     }
+
     @AllArgsConstructor
     public static class DataSetInput extends DL4JInput<DataSet> {
 

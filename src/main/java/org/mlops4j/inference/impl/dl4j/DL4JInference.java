@@ -46,6 +46,8 @@ public abstract class DL4JInference<I extends Input<?>, O extends Output<?>> imp
             switch (type) {
                 case SINGLE:
                     return (DL4JInference<I, O>) new SingleInference();
+                case BATCH:
+                    return (DL4JInference<I, O>) new BatchInference();
             }
             return null;
         }
@@ -63,6 +65,10 @@ public abstract class DL4JInference<I extends Input<?>, O extends Output<?>> imp
             return this.type(InferenceType.SINGLE);
         }
 
+        public Builder batch() {
+            return this.type(InferenceType.BATCH);
+        }
+
     }
 
     private static class SingleInference extends DL4JInference<DL4JInput<?>, Output<?>> {
@@ -72,10 +78,38 @@ public abstract class DL4JInference<I extends Input<?>, O extends Output<?>> imp
         public CompletableFuture infer(Inferable inferable, DL4JInput input) {
             try {
                 lock.lock();
+                // TODO what if this is not classifier?
                 Classifier model = (Classifier) inferable.getModelRepresentation().get();
                 if (input.getValue() instanceof INDArray) {
                     return CompletableFuture.completedFuture(
                             new ClassifierPredictor.SingleRecordPredictor().predict(model, input)
+                    );
+                } else {
+                    throw new UnsupportedOperationException(String.format("Cannot support value of type %s", input.getValue().getClass()));
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        @Override
+        public Metadata getMetadata() throws DurabilityException {
+            return new Metadata(this).withParameter("type", InferenceType.SINGLE.name());
+        }
+    }
+
+    private static class BatchInference extends DL4JInference<DL4JInput<?>, Output<?>> {
+        private final ReentrantLock lock = new ReentrantLock();
+
+        @Override
+        public CompletableFuture infer(Inferable inferable, DL4JInput input) {
+            try {
+                lock.lock();
+                // TODO what if this is not classifier?
+                Classifier model = (Classifier) inferable.getModelRepresentation().get();
+                if (input.getValue() instanceof INDArray) {
+                    return CompletableFuture.completedFuture(
+                            new ClassifierPredictor.MultipleRecordPredictor().predict(model, input)
                     );
                 } else {
                     throw new UnsupportedOperationException(String.format("Cannot support value of type %s", input.getValue().getClass()));
@@ -97,7 +131,7 @@ public abstract class DL4JInference<I extends Input<?>, O extends Output<?>> imp
     }
 
     public enum InferenceType {
-        SINGLE
+        SINGLE, BATCH;
     }
 
 }

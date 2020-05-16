@@ -22,6 +22,8 @@ import org.deeplearning4j.nn.api.Classifier;
 import org.mlops4j.inference.api.Output;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
+import java.util.Arrays;
+
 /**
  * @author Michał Żelechowski <MichalZelechowski@github.com>
  */
@@ -30,7 +32,7 @@ public interface ClassifierPredictor<I extends DL4JInput, O extends Output> {
 
     O predict(Classifier classifier, I input);
 
-    public class SingleRecordPredictor implements ClassifierPredictor<DL4JInput<INDArray>, Output<Integer>> {
+    class SingleRecordPredictor implements ClassifierPredictor<DL4JInput<INDArray>, Output<Integer>> {
 
         @Override
         public Output<Integer> predict(Classifier classifier, DL4JInput<INDArray> input) {
@@ -42,6 +44,16 @@ public interface ClassifierPredictor<I extends DL4JInput, O extends Output> {
                     String.format("Expecting 1 row as input but found %s instead", inputArray.shape()[0]));
             int[] prediction = classifier.predict(inputArray);
             return Output.from(prediction[0]);
+        }
+    }
+
+    class MultipleRecordPredictor implements ClassifierPredictor<DL4JInput<INDArray>, Output<Integer[]>> {
+
+        @Override
+        public Output<Integer[]> predict(Classifier classifier, DL4JInput<INDArray> input) {
+            INDArray inputArray = input.getValue();
+            int[] prediction = classifier.predict(inputArray);
+            return Output.from(Arrays.stream(prediction).boxed().toArray(Integer[]::new));
         }
     }
 }

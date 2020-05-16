@@ -18,7 +18,6 @@
 package org.mlops4j.inference.api;
 
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
@@ -26,13 +25,11 @@ import lombok.ToString;
  */
 @AllArgsConstructor
 @ToString
-@EqualsAndHashCode
-public class LabelIndex implements Output<Integer> {
-
-    private final Integer value;
+public class LabeledIndexes implements Output<Integer[]> {
+    private final Integer[] value;
 
     @Override
-    public Integer getValue() {
+    public Integer[] getValue() {
         return this.value;
     }
 }
